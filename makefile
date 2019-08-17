@@ -12,6 +12,7 @@ INC 		:= ./inc/
 SRC 		:= ./src/
 OBJ 		:= ./obj/$(ARCH)bit/
 SLIB 		:= ./static_lib/$(ARCH)bit/
+DLIB 		:= ./dynamic_lib/$(ARCH)bit/
 INCLUDES 	:= -I$(INC)
 CFLAGS 		:= $(C_FLAGS_$(ARCH)) -pedantic -ansi -Werror -Wall $(INCLUDES)
 
@@ -30,9 +31,12 @@ all : $(OBJECTS) $(SLIB)LDS.a
 
 $(SLIB)LDS.a :$(OBJECTS)
 	ar cr $@ $^
-	
+
+$(DLIB)LDS.so :$(OBJECTS)
+	$(CC) -fPIC -shared $@ $^
+
 $(OBJ)%.o : $(SRC)%.c $(INC)%.h
-	$(CC) $(CFLAGS) -c $< -o $@ 
+	$(CC) $(CFLAGS) -c $< -o $@
 
 run:
 		
