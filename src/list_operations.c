@@ -1,6 +1,6 @@
 #include "list_operations.h"
 #include "listInternal.h"
-#include "../list.h"
+#include "list.h"
 
 static void BubbleUp(ListItr _itrNext,ListItr _itrEnd,LessFunction _less);
 static void swap(ListItr _itrNext,void* _elementBig,void* _elementSmall);

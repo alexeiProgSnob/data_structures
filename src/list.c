@@ -1,5 +1,5 @@
 #include "list.h"
-#include "./list/listInternal.h"
+#include "listInternal.h"
 #include <stdlib.h>/* for malloc */ 
 
 /** 

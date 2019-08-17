@@ -13,8 +13,8 @@
  *  @bug No known bugs.
  */ 
 
-#include "./list/list_itr.h"
-#include "./list/list_operations.h"
+#include "list_itr.h"
+#include "list_operations.h"
 #include <stddef.h>  /*< size_t >*/
 
 
