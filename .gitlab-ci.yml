@@ -1,0 +1,9 @@
+my_data_structure:
+  script:
+    - make clean
+    - cd src/list
+    - make clean
+    - make
+    - cd ..
+    - cd ..
+    - make
