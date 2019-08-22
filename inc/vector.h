@@ -18,7 +18,7 @@ typedef int	(*VectorElementAction)(void* _element, size_t _index, void* _context
 
 typedef enum Vector_Result {
 	VECTOR_SUCCESS,
-	VECTOR_UNITIALIZED_ERROR,				/*< Uninitialized vector error >*/
+	VECTOR_UNINITIALIZED_ERROR,				/*< Uninitialized vector error >*/
 	VECTOR_INDEX_OUT_OF_BOUNDS_ERROR,		/*< Idex in get at set to vector is out of bounds >*/
 	VECTOR_UINITIALIZED_ITEM_ERROR,			/*< Uninitialized item error >*/
 	VECTOR_REALLOCATION_ERROR,				/*< realloc error on grow/shrink >*/
@@ -54,7 +54,7 @@ void VectorDestroy(Vector** _vector, void (*_elementDestroy)(void* _item));
  * @param[in] _item - Item to add.
  * @return success or error code
  * @return[success] : VECTOR_SUCCESS
- * @return[failure] : VECTOR_UNITIALIZED_ERROR
+ * @return[failure] : VECTOR_UNINITIALIZED_ERROR
  * @return[failure] : VECTOR_UINITIALIZED_ITEM_ERROR
  * @return[failure] : VECTOR_REALLOCATION_ERROR
  * @return[failure] : VECTOR_OVERFLOW_ERROR - if _blockSize was zero at VectorCreate
@@ -68,7 +68,7 @@ Vector_Result VectorAppend(Vector* _vector, void* _item);
  * @param[out] _pValue - pointer to variable that will receive deleted item value
  * @return success or error code
  * @return[success] : VECTOR_SUCCESS
- * @return[failure] : VECTOR_UNITIALIZED_ERROR
+ * @return[failure] : VECTOR_UNINITIALIZED_ERROR
  * @return[failure] : VECTOR_UNDERFLOW_ERROR
  * @return[failure] : VECTOR_REALLOCATION_ERROR
  * @warning _item can't be null. this will be assertion violation
@@ -82,7 +82,7 @@ Vector_Result VectorRemove(Vector* _vector, void** _pValue);
  * @param[out] _pValue - pointer to variable that will recieve the item's value.
  * @return success or error code
  * @return[success] : VECTOR_SUCCESS
- * @return[failure] : VECTOR_UNITIALIZED_ERROR
+ * @return[failure] : VECTOR_UNINITIALIZED_ERROR
  * @return[failure] : VECTOR_INDEX_OUT_OF_BOUNDS_ERROR
  *
  * @warning Index starts from 0.
@@ -96,7 +96,7 @@ Vector_Result VectorGet(const Vector* _vector, size_t _index, void** _pValue);
  * @param[in] _value - new value to set.
  * @return success or error code
  * @return[success] : VECTOR_SUCCESS
- * @return[failure] : VECTOR_UNITIALIZED_ERROR
+ * @return[failure] : VECTOR_UNINITIALIZED_ERROR
  * @return[failure] : VECTOR_INDEX_OUT_OF_BOUNDS_ERROR
  *
  * @warning Index starts from 0.

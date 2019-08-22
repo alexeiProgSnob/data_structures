@@ -27,12 +27,12 @@ OBJECTS		+= $(OBJ)list_operations.o
 
 .PHONY : all
 
-all : $(OBJECTS) $(SLIB)LDS.a
+all : $(OBJECTS) $(SLIB)LDS_$(ARCH)bit.a
 
-$(SLIB)LDS.a :$(OBJECTS)
+$(SLIB)LDS_$(ARCH)bit.a :$(OBJECTS)
 	ar cr $@ $^
 
-$(DLIB)LDS.so :$(OBJECTS)
+$(DLIB)LDS_$(ARCH)bit.so :$(OBJECTS)
 	$(CC) -fPIC -shared $@ $^
 
 $(OBJ)%.o : $(SRC)%.c $(INC)%.h
