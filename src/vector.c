@@ -14,18 +14,23 @@ struct Vector {
     size_t m_size;		  	/*< Vector capacity 							>*/
 	size_t m_nItems;	  	/*< Number of elemnts 							>*/
     size_t m_blockSize;		/*< block size to reallocate the size of vector >*/
+	Vector_Type m_type;
 };
 
 
 static Vector_Result _ReallocateSpace(Vector* _vector, int _inc);
 
 
-Vector* VectorCreate(size_t _initialCapacity, size_t _blockSize) {
+Vector* VectorCreate(size_t _initialCapacity, size_t _blockSize, Vector_Type _type) {
 
 	Vector *vector;
 	void** pm_item;
 
-	if (_initialCapacity == 0 && _blockSize == 0) {
+	if (0 == _initialCapacity && 0 == _blockSize) {
+		return NULL;
+	}
+
+	if (_type >= VECTOR_TYPE_END || _type <= VECTOR_TYPE_START) {
 		return NULL;
 	}
 
@@ -45,6 +50,7 @@ Vector* VectorCreate(size_t _initialCapacity, size_t _blockSize) {
     vector->m_size = _initialCapacity;
 	vector->m_nItems = 0;
     vector->m_blockSize = _blockSize;
+	vector->m_type = _type;
     return vector;
 }
 
@@ -72,7 +78,7 @@ Vector_Result VectorAppend(Vector* _vector, void* _item) {
     }
 
 	if (NULL == _item) {
-		return VECTOR_UINITIALIZED_ITEM_ERROR;
+		return VECTOR_UNINITIALIZED_ITEM_ERROR;
 	}
 
 	if (_vector->m_nItems == _vector->m_size) {
