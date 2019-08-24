@@ -30,21 +30,37 @@ typedef enum Compare_Result {
 
 typedef Compare_Result (*CompareFunc) (void*, void*);
 typedef void (*SwapFunc) (void*, void*);
-typedef void* (*NextIterationFunc) (void*);
+/* For example
+Compare_Result CompareSizeT(void* _generalTypeA, void* _generalTypeB) {
+    size_t* typeA = (size_t*) _generalTypeA;
+    size_t* typeB = (size_t*) _generalTypeB;
+    if (*typeA > *typeB) {
+        return BIGGER;
+    }
 
-/*
-typedef struct MergeSort MergeSort;
-MergeSort* CreateMergeSort(CompareFunc _compareOperation);
-void MergeSortOnData(MergeSort* _mergeSortData, void** _dataToSort);
-void DestroyMergeSort(MergeSort** _mergeSortData);
+    return SMALLER;
+}
+
+void SwapToSizeT(void* _generalTypeA, void* _generalTypeB) {
+    size_t* typeA = (size_t*) _generalTypeA;
+    size_t* typeB = (size_t*) _generalTypeB;
+    size_t temp = *typeA;
+    *typeA = *typeB;
+    *typeB = temp; 
+}
 */
 
-typedef struct BubbleSort BubbleSort;
-BubbleSort* CreateBubbleSort(CompareFunc _compareOperation, SwapFunc _swapOperation);
-Sort_Result BubbleSortOnData(
-    BubbleSort* _bubbleSortData, 
+Sort_Result MergeSortOnData(
     void*       _arrayOfDataToSort, 
     size_t      _dataSizeInByte, 
-    size_t      _arrayDataToSortInByte);
-void DestroyBubbleSort(BubbleSort** _bubbleSortData);
+    size_t      _arrayDataToSortInByte,
+    CompareFunc _compareOperation, 
+    SwapFunc    _swapOperation);
+
+Sort_Result BubbleSortOnData(
+    void*       _arrayOfDataToSort, 
+    size_t      _dataSizeInByte, 
+    size_t      _arrayDataToSortInByte,
+    CompareFunc _compareOperation, 
+    SwapFunc    _swapOperation);
 #endif /*< SORTS_H_ >*/

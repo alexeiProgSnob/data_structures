@@ -69,29 +69,21 @@ UNIT(basic_valid_size_t_pointer_bubble_sort_test)
     size_t four = 4;
     size_t arrFinalResult[4] = {1,2,3,4};
     size_t arrSize = 4;
-    BubbleSort* bs = CreateBubbleSort(CompareSizeTPointers, SwapToSizeTPointers);	
     size_t* arr[4];
     arr[0] = &two;
     arr[1] = &one;
     arr[2] = &four;
     arr[3] = &three;
-    ASSERT_THAT(NULL != bs); 
-    ASSERT_THAT(SORT_SUCCESS == BubbleSortOnData(bs, (void*)&arr, sizeof(size_t*), sizeof(arr)));
+    ASSERT_THAT(SORT_SUCCESS == BubbleSortOnData((void*)&arr, sizeof(size_t*), sizeof(arr), CompareSizeTPointers, SwapToSizeTPointers));
     ASSERT_THAT(0 == CompareTwoArraysP(arr, arrFinalResult, arrSize));
-    DestroyBubbleSort(&bs);
-    ASSERT_THAT(NULL == bs);
 END_UNIT
 
 UNIT(basic_valid_size_t_bubble_sort_test)
     size_t arrFinalResult[4] = {1,2,3,4};
     size_t arr[4] = {2,1,4,3};
     size_t arrSize = 4;
-    BubbleSort* bs = CreateBubbleSort(CompareSizeT, SwapToSizeT);	
-    ASSERT_THAT(NULL != bs); 
-    ASSERT_THAT(SORT_SUCCESS == BubbleSortOnData(bs, (void*)arr, sizeof(size_t*), sizeof(arr)));
+    ASSERT_THAT(SORT_SUCCESS == BubbleSortOnData((void*)arr, sizeof(size_t*), sizeof(arr), CompareSizeT, SwapToSizeT));
     ASSERT_THAT(0 == CompareTwoArrays(arr, arrFinalResult, arrSize));
-    DestroyBubbleSort(&bs);
-    ASSERT_THAT(NULL == bs);
 END_UNIT
 
 
