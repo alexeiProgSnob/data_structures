@@ -1,6 +1,7 @@
 #include "sorts.h"
 #include <stdlib.h> /*< malloc  >*/
 #include <stdint.h> /*< uint8_t >*/
+#include <string.h> /*< memscpy >*/
 
 
 Sort_Result BubbleSortOnData(
@@ -50,7 +51,7 @@ struct MergeSort {
 };
 
 
-
+/*
 static void _RecutionMerge(
     void*       _arrayOfDataToSort, 
     size_t      _arrayDataToSortInByte,
@@ -73,12 +74,13 @@ static void _RecutionMerge(
     
     leftBuffer = (uint8_t*)malloc(nextNumOfBytes);
     rightBuffer = (uint8_t*)malloc(_arrayDataToSortInByte - nextNumOfBytes);
-    memscpy(leftBuffer, nextNumOfBytes, byteData, nextNumOfBytes);
-    memscpy(rightBuffer, _arrayDataToSortInByte - nextNumOfBytes, byteData + nextNumOfBytes, _arrayDataToSortInByte - nextNumOfBytes);
+    memcpy(leftBuffer, byteData, nextNumOfBytes);
+    memcpy(rightBuffer, byteData + nextNumOfBytes, _arrayDataToSortInByte - nextNumOfBytes);
     _RecutionMerge(leftBuffer, nextNumOfBytes, _sortData);
     _RecutionMerge(rightBuffer, _arrayDataToSortInByte - nextNumOfBytes, _sortData);
 
 } 
+
 
 Sort_Result MergeSortOnData(
     void*       _arrayOfDataToSort, 
@@ -100,3 +102,4 @@ Sort_Result MergeSortOnData(
 
     return SORT_SUCCESS;
 }
+*/

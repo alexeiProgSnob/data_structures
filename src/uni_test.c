@@ -1,5 +1,6 @@
 #include "uni_test.h"
 #include "sorts.h"
+#include "vector.h"
 #include <stdio.h>
 
 Compare_Result CompareSizeTPointers(void* _generalTypeA, void* _generalTypeB) {
@@ -86,8 +87,64 @@ UNIT(basic_valid_size_t_bubble_sort_test)
     ASSERT_THAT(0 == CompareTwoArrays(arr, arrFinalResult, arrSize));
 END_UNIT
 
+UNIT(Allocate_Vector)
+    Vector* newVector = VectorCreate(10, 5, UNSORTED_VECTOR);
+    ASSERT_THAT(NULL != newVector);
+    VectorDestroy(&newVector, NULL);
+    ASSERT_THAT(NULL == newVector); 
+END_UNIT
 
-TEST_SUITE(Test DataSructures)
+UNIT(Append_To_Vector_Elements_Expect_No_Crash)
+    size_t arr[] = {2,1,4,3};
+    size_t i = 0;
+    Vector* newVector = VectorCreate(10, 5, UNSORTED_VECTOR);
+    Vector_Result resultChecker = VECTOR_UNINITIALIZED_ERROR;
+    ASSERT_THAT(NULL != newVector);
+    for (i = 0; i < sizeof(arr)/sizeof(size_t) ; ++i) {
+        resultChecker = VectorAppend(newVector, arr + i);
+        ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+    }
+    VectorDestroy(&newVector, NULL);
+    ASSERT_THAT(NULL == newVector); 
+END_UNIT
+
+UNIT(Append_To_Vector_Elements_Expect_No_Crash_And_Then_Get_All)
+    size_t arr[] = {2,1,4,3};
+    size_t i = 0;
+    size_t numOfElements = sizeof(arr) / sizeof(size_t);
+    size_t* value = NULL;
+    Vector* newVector = VectorCreate(10, 5, UNSORTED_VECTOR);
+    Vector_Result resultChecker = VECTOR_UNINITIALIZED_ERROR;
+    ASSERT_THAT(NULL != newVector);
+    for (i = 0; i < numOfElements; ++i) {
+        resultChecker = VectorAppend(newVector, arr + i);
+        ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+    }
+
+    for (i = 0; i < numOfElements; ++i) {
+        resultChecker = VectorGet(newVector, i, (void**)&value);
+        ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+        ASSERT_THAT(*value == arr[i]);
+    }
+
+    for (i = numOfElements; i > 0; --i) {
+        resultChecker = VectorRemove(newVector, (void**)&value);
+        ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+        ASSERT_THAT(*value == arr[i - 1]);
+    }
+    
+    VectorDestroy(&newVector, NULL);
+    ASSERT_THAT(NULL == newVector);
+
+END_UNIT
+TEST_SUITE(Test DataStructures)
+    /* bubble Sort Tests */
 	TEST(basic_valid_size_t_pointer_bubble_sort_test)
     TEST(basic_valid_size_t_bubble_sort_test)
+
+    /* Vector Tests */
+    TEST(Allocate_Vector)
+    TEST(Append_To_Vector_Elements_Expect_No_Crash)
+    TEST(Append_To_Vector_Elements_Expect_No_Crash_And_Then_Get_All)
+
 END_SUITE

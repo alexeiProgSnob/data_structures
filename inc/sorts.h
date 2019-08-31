@@ -3,7 +3,7 @@
 
 
 /**
- *  @file sorst.h
+ *  @file sorts.h
  *  @brief
  *  @details
  *
@@ -50,13 +50,14 @@ void SwapToSizeT(void* _generalTypeA, void* _generalTypeB) {
 }
 */
 
+/*
 Sort_Result MergeSortOnData(
     void*       _arrayOfDataToSort, 
     size_t      _dataSizeInByte, 
     size_t      _arrayDataToSortInByte,
     CompareFunc _compareOperation, 
     SwapFunc    _swapOperation);
-
+*/
 Sort_Result BubbleSortOnData(
     void*       _arrayOfDataToSort, 
     size_t      _dataSizeInByte, 

@@ -82,10 +82,24 @@ Vector_Result VectorAppend(Vector* _vector, void* _item);
 Vector_Result VectorRemove(Vector* _vector, void** _pValue);
 
 /**
+ * @brief Remove and get the value of item at specific index from the the Vector
+ * @param[in] _vector - Vector to use.
+ * @param[in] _index - index of item to remove value from. the index of first element is 0
+ * @param[out] _pValue - pointer to variable that will receive the item's value.
+ * @return success or error code
+ * @return[success] : VECTOR_SUCCESS
+ * @return[failure] : VECTOR_UNINITIALIZED_ERROR
+ * @return[failure] : VECTOR_INDEX_OUT_OF_BOUNDS_ERROR
+ *
+ * @warning Index starts from 0.
+ */
+Vector_Result VectorRemoveFrom(Vector* _vector, size_t _index, void** _pValue);
+
+/**
  * @brief Get value of item at specific index from the the Vector
  * @param[in] _vector - Vector to use.
- * @param[in] _index - index of item to get value from. the index of first elemnt is 0
- * @param[out] _pValue - pointer to variable that will recieve the item's value.
+ * @param[in] _index - index of item to get value from. the index of first element is 0
+ * @param[out] _pValue - pointer to variable that will receive the item's value.
  * @return success or error code
  * @return[success] : VECTOR_SUCCESS
  * @return[failure] : VECTOR_UNINITIALIZED_ERROR
