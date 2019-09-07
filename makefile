@@ -15,7 +15,7 @@ SLIB 		:= ./static_lib/$(ARCH)bit/
 DLIB 		:= ./dynamic_lib/$(ARCH)bit/
 UNI_TEST	:= ./uni_test/
 INCLUDES 	:= -I$(INC)
-CFLAGS 		:= $(C_FLAGS_$(ARCH)) -pedantic -ansi -Werror -Wall $(INCLUDES) -pthread
+CFLAGS 		:= $(C_FLAGS_$(ARCH)) -fPIC -pedantic -ansi -Werror -Wall $(INCLUDES) -pthread
 
 OBJECTS 	:= $(OBJ)log4c.o 
 OBJECTS 	+= $(OBJ)hash.o 
@@ -29,24 +29,30 @@ OBJECTS		+= $(OBJ)sorts.o
 
 .PHONY : all
 
-all : $(OBJECTS) $(SLIB)LDS_$(ARCH)bit.a
+all : $(OBJECTS) $(SLIB)LDS_$(ARCH)bit.a $(DLIB)LDS_$(ARCH)bit.so
 
-test: $(OBJECTS) $(OBJ)uni_test.o
-	$(CC) $(CFLAGS) -o $@ $^
+utest: $(OBJECTS) $(OBJ)uni_test.o
+	@echo "__________________ Linking __________________"
+	@echo "__________________ $@ __________________"
+	@echo "$^";$(CC) $(CFLAGS) -o $@ $^
 
 $(SLIB)LDS_$(ARCH)bit.a :$(OBJECTS)
-	ar cr $@ $^
+	@echo "Build static lib $@";ar cr $@ $^
 
 $(DLIB)LDS_$(ARCH)bit.so :$(OBJECTS)
-	$(CC) -fPIC -shared $@ $^
+	$(CC) $(CFLAGS) -shared $^ -o $@
 
 $(OBJ)%.o : $(SRC)%.c $(INC)%.h
-	$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Compile $@";$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ)%.o : $(SRC)%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Compile $@";$(CC) $(CFLAGS) -c $< -o $@
+
+run_uni_test: utest
+	./utest
 
 clean:
 	rm -rf $(OBJ)*.o
 	rm -rf $(SLIB)*.a
+	rm -rf $(DLIB)*.so
 
