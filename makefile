@@ -49,7 +49,7 @@ $(OBJ)%.o : $(SRC)%.c
 	@echo "Compile $@";$(CC) $(CFLAGS) -c $< -o $@
 
 run_uni_test: utest
-	./utest
+	@echo "run $<";./$<
 
 clean:
 	rm -rf $(OBJ)*.o

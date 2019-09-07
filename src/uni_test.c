@@ -88,7 +88,7 @@ UNIT(basic_valid_size_t_bubble_sort_test)
 END_UNIT
 
 UNIT(Allocate_Vector)
-    Vector* newVector = VectorCreate(10, 5, UNSORTED_VECTOR);
+    Vector* newVector = VectorCreate(10, 5);
     ASSERT_THAT(NULL != newVector);
     VectorDestroy(&newVector, NULL);
     ASSERT_THAT(NULL == newVector); 
@@ -97,13 +97,16 @@ END_UNIT
 UNIT(Append_To_Vector_Elements_Expect_No_Crash)
     size_t arr[] = {2,1,4,3};
     size_t i = 0;
-    Vector* newVector = VectorCreate(10, 5, UNSORTED_VECTOR);
+    Vector* newVector = VectorCreate(10, 5);
     Vector_Result resultChecker = VECTOR_UNINITIALIZED_ERROR;
     ASSERT_THAT(NULL != newVector);
+    ASSERT_THAT(VectorCapacity(newVector) == 10);
     for (i = 0; i < sizeof(arr)/sizeof(size_t) ; ++i) {
         resultChecker = VectorAppend(newVector, arr + i);
         ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
     }
+
+    ASSERT_THAT(VectorSize(newVector) == sizeof(arr)/sizeof(size_t));
     VectorDestroy(&newVector, NULL);
     ASSERT_THAT(NULL == newVector); 
 END_UNIT
@@ -113,7 +116,7 @@ UNIT(Append_To_Vector_Elements_Expect_No_Crash_And_Then_Get_All)
     size_t i = 0;
     size_t numOfElements = sizeof(arr) / sizeof(size_t);
     size_t* value = NULL;
-    Vector* newVector = VectorCreate(10, 5, UNSORTED_VECTOR);
+    Vector* newVector = VectorCreate(10, 5);
     Vector_Result resultChecker = VECTOR_UNINITIALIZED_ERROR;
     ASSERT_THAT(NULL != newVector);
     for (i = 0; i < numOfElements; ++i) {
@@ -135,8 +138,44 @@ UNIT(Append_To_Vector_Elements_Expect_No_Crash_And_Then_Get_All)
     
     VectorDestroy(&newVector, NULL);
     ASSERT_THAT(NULL == newVector);
-
 END_UNIT
+
+UNIT(Vector_RemoveFrom)
+    size_t arr[] = {2,1,4,3};
+    size_t i = 0;
+    size_t numOfElements = sizeof(arr) / sizeof(size_t);
+    size_t* value = NULL;
+    Vector* newVector = VectorCreate(10, 5);
+    Vector_Result resultChecker = VECTOR_UNINITIALIZED_ERROR;
+    ASSERT_THAT(NULL != newVector);
+    for (i = 0; i < numOfElements; ++i) {
+        resultChecker = VectorAppend(newVector, arr + i);
+        ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+    }
+
+    resultChecker = VectorRemoveFrom(newVector, 1, (void**)&value);
+    ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+    ASSERT_THAT(*value == arr[1]);
+    
+    resultChecker = VectorRemoveFrom(newVector, 1, (void**)&value);
+    ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+    ASSERT_THAT(*value == arr[2]);
+
+    resultChecker = VectorRemoveFrom(newVector, 1, (void**)&value);
+    ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+    ASSERT_THAT(*value == arr[3]);
+
+    resultChecker = VectorRemoveFrom(newVector, 1, (void**)&value);
+    ASSERT_THAT(VECTOR_INDEX_OUT_OF_BOUNDS_ERROR == resultChecker);
+
+    resultChecker = VectorRemoveFrom(newVector, 0, (void**)&value);
+    ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+    ASSERT_THAT(*value == arr[0]);
+
+    VectorDestroy(&newVector, NULL);
+    ASSERT_THAT(NULL == newVector);
+END_UNIT
+
 TEST_SUITE(Test DataStructures)
     /* bubble Sort Tests */
 	TEST(basic_valid_size_t_pointer_bubble_sort_test)
@@ -146,5 +185,5 @@ TEST_SUITE(Test DataStructures)
     TEST(Allocate_Vector)
     TEST(Append_To_Vector_Elements_Expect_No_Crash)
     TEST(Append_To_Vector_Elements_Expect_No_Crash_And_Then_Get_All)
-
+    TEST(Vector_RemoveFrom)
 END_SUITE

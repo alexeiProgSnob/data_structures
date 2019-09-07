@@ -20,7 +20,7 @@ typedef enum Vector_Result {
 	VECTOR_SUCCESS,
 	VECTOR_UNINITIALIZED_ERROR,				/*< Uninitialized vector error >*/
 	VECTOR_INDEX_OUT_OF_BOUNDS_ERROR,		/*< Idex in get at set to vector is out of bounds >*/
-	VECTOR_UNINITIALIZED_ITEM_ERROR,			/*< Uninitialized item error >*/
+	VECTOR_UNINITIALIZED_ITEM_ERROR,		/*< Uninitialized item error >*/
 	VECTOR_REALLOCATION_ERROR,				/*< realloc error on grow/shrink >*/
 	VECTOR_OVERFLOW_ERROR,					/*< There is no space to insert items and no reallocte >*/
 	VECTOR_UNDERFLOW_ERROR					/*< There is no items in vector >*/
@@ -28,12 +28,6 @@ typedef enum Vector_Result {
 	/* Add more as needed by your implementation */
 } Vector_Result;
 
-typedef enum Vector_Type {
-	VECTOR_TYPE_START,
-	SORTED_VECTOR,
-	UNSORTED_VECTOR,
-	VECTOR_TYPE_END
-} Vector_Type;
 /**
  * @brief Dynamically create a new vector object of given capacity and
  * @param[in] _initialCapacity - initial capacity, number of elements that can be stored initially
@@ -43,7 +37,7 @@ typedef enum Vector_Type {
  * @warning if _blockSize is 0 the vector will be of fixed size.
  * @warning if both _initialCapacity and _blockSize are zero function will return NULL.
  */
-Vector* VectorCreate(size_t _initialCapacity, size_t _blockSize, Vector_Type _type);
+Vector* VectorCreate(size_t _initialCapacity, size_t _blockSize);
 
 /**
  * @brief Dynamically deallocate a previously allocated vector
@@ -121,7 +115,7 @@ Vector_Result VectorGet(const Vector* _vector, size_t _index, void** _pValue);
  *
  * @warning Index starts from 0.
  */
-Vector_Result VectorSet(Vector* _vector, size_t _index, void*  _value);
+Vector_Result VectorSet(Vector* _vector, size_t _index, void*  _value, void** _prevValue);
 
 /**
  * @brief Get the number of actual items currently in the vector.

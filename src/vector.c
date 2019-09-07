@@ -13,23 +13,18 @@ struct Vector {
     size_t m_size;		  	/*< Vector capacity 							>*/
 	size_t m_numOfItems;	/*< Number of elemnts 							>*/
     size_t m_blockSize;		/*< block size to reallocate the size of vector >*/
-	Vector_Type m_type;
 };
 
 
 static Vector_Result _ReallocateSpace(Vector* _vector, int _inc);
 static Vector_Result _CheckIfNeedToReallocateMemory(Vector*_vector);
 
-Vector* VectorCreate(size_t _initialCapacity, size_t _blockSize, Vector_Type _type) {
+Vector* VectorCreate(size_t _initialCapacity, size_t _blockSize) {
 
 	Vector *vector;
 	void** pm_item;
 
 	if (0 == _initialCapacity && 0 == _blockSize) {
-		return NULL;
-	}
-
-	if (_type >= VECTOR_TYPE_END || _type <= VECTOR_TYPE_START) {
 		return NULL;
 	}
 
@@ -49,7 +44,6 @@ Vector* VectorCreate(size_t _initialCapacity, size_t _blockSize, Vector_Type _ty
     vector->m_size = _initialCapacity;
 	vector->m_numOfItems = 0;
     vector->m_blockSize = _blockSize;
-	vector->m_type = _type;
     return vector;
 }
 
@@ -119,14 +113,15 @@ Vector_Result VectorRemoveFrom(Vector* _vector, size_t _index, void** _pValue) {
 		return VECTOR_UNINITIALIZED_ERROR;
 	}
 
-	if (_index > _vector->m_numOfItems) {
+	if (_index >= _vector->m_numOfItems) {
 		return VECTOR_INDEX_OUT_OF_BOUNDS_ERROR;
 	}
 
 	*_pValue = *(_vector->m_items + _index);
 	for (i = _index + 1; i < _vector->m_numOfItems; ++i) { 
-		*(_vector->m_items + i) = *(_vector->m_items + i - 1);
+		*(_vector->m_items + i - 1) = *(_vector->m_items + i);
 	}
+
     --(_vector->m_numOfItems);
 	return _CheckIfNeedToReallocateMemory(_vector);
 }
@@ -137,7 +132,7 @@ Vector_Result VectorGet(const Vector* _vector, size_t _index, void** _pValue) {
 		return VECTOR_UNINITIALIZED_ERROR;
 	}
 
-	if (_index > _vector->m_numOfItems) {
+	if (_index >= _vector->m_numOfItems) {
 		return VECTOR_INDEX_OUT_OF_BOUNDS_ERROR;
 	}
 
@@ -145,13 +140,17 @@ Vector_Result VectorGet(const Vector* _vector, size_t _index, void** _pValue) {
 	return VECTOR_SUCCESS;
 }
 
-Vector_Result VectorSet(Vector* _vector, size_t _index, void*  _value) {
+Vector_Result VectorSet(Vector* _vector, size_t _index, void*  _value, void** _prevValue) {
 	if (NULL == _vector || NULL == _value) {
 		return VECTOR_UNINITIALIZED_ERROR;
 	}
 
-	if (_index > _vector->m_numOfItems) {
+	if (_index >= _vector->m_numOfItems) {
 		return VECTOR_INDEX_OUT_OF_BOUNDS_ERROR;
+	}
+
+	if (_prevValue != NULL) {
+		*_prevValue = *(_vector->m_items + _index);
 	}
 
 	*(_vector->m_items + _index) = _value;
