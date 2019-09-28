@@ -21,17 +21,19 @@ OBJECTS 	:= $(OBJ)log4c.o
 OBJECTS 	+= $(OBJ)hash.o 
 OBJECTS		+= $(OBJ)queue.o
 OBJECTS		+= $(OBJ)safe_queue.o
+OBJECTS		+= $(OBJ)heap.o
 OBJECTS		+= $(OBJ)vector.o
 OBJECTS		+= $(OBJ)list.o
 OBJECTS 	+= $(OBJ)list_itr.o
 OBJECTS		+= $(OBJ)list_operations.o
 OBJECTS		+= $(OBJ)sorts.o
 
+UTEST_NAME := utest
 .PHONY : all
 
 all : $(OBJECTS) $(SLIB)LDS_$(ARCH)bit.a $(DLIB)LDS_$(ARCH)bit.so
 
-utest: $(OBJECTS) $(OBJ)uni_test.o
+$(UTEST_NAME): $(OBJECTS) $(OBJ)uni_test.o
 	@echo "__________________ Linking __________________"
 	@echo "__________________ $@ __________________"
 	@echo "$^";$(CC) $(CFLAGS) -o $@ $^
@@ -48,8 +50,11 @@ $(OBJ)%.o : $(SRC)%.c $(INC)%.h
 $(OBJ)%.o : $(SRC)%.c
 	@echo "Compile $@";$(CC) $(CFLAGS) -c $< -o $@
 
-run_uni_test: utest
+run_uni_test: $(UTEST_NAME) valgrind
 	@echo "run $<";./$<
+
+valgrind: $(UTEST_NAME)
+	$@ --leak-check=full --show-leak-kinds=all -v ./$<
 
 clean:
 	rm -rf $(OBJ)*.o

@@ -4,7 +4,7 @@
 #include <stddef.h>  /* size_t */
 
 /** 
- *  @file HashMap.h
+ *  @file hash.h
  *  @brief Generic Hash map of key-value pairs implemented with separate chaining using linked lists.
  *	
  *  @details  The hash map (sometimes called dictionary or associative array)

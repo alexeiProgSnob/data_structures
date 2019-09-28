@@ -20,7 +20,6 @@ static Vector_Result _ReallocateSpace(Vector* _vector, int _inc);
 static Vector_Result _CheckIfNeedToReallocateMemory(Vector*_vector);
 
 Vector* VectorCreate(size_t _initialCapacity, size_t _blockSize) {
-
 	Vector *vector;
 	void** pm_item;
 

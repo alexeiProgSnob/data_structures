@@ -1,6 +1,7 @@
 #include "uni_test.h"
 #include "sorts.h"
 #include "vector.h"
+#include "heap.h"
 #include <stdio.h>
 
 Compare_Result CompareSizeTPointers(void* _generalTypeA, void* _generalTypeB) {
@@ -61,6 +62,17 @@ void SwapToSizeT(void* _generalTypeA, void* _generalTypeB) {
     size_t temp = *typeA;
     *typeA = *typeB;
     *typeB = temp; 
+}
+
+
+Heap_Data_Compare_Result Int_Heap(const void* _a, const void* _b) {
+    const int* a = (const int*)_a;
+    const int* b = (const int*)_b;
+    if (a > b) {
+        return HEAP_COMPARE_BIGGER;
+    }
+
+    return HEAP_COMPARE_SMALLER;
 }
 
 UNIT(basic_valid_size_t_pointer_bubble_sort_test)
@@ -176,6 +188,13 @@ UNIT(Vector_RemoveFrom)
     ASSERT_THAT(NULL == newVector);
 END_UNIT
 
+UNIT(Allocate_Heap)
+    Heap* newHeap = HeapCreate(10, HEAP_TYPE_MIN, Int_Heap);
+    ASSERT_THAT(NULL != newHeap);
+    HeapDestroy(&newHeap, NULL);
+    ASSERT_THAT(NULL == newHeap); 
+END_UNIT
+
 TEST_SUITE(Test DataStructures)
     /* bubble Sort Tests */
 	TEST(basic_valid_size_t_pointer_bubble_sort_test)
@@ -186,4 +205,7 @@ TEST_SUITE(Test DataStructures)
     TEST(Append_To_Vector_Elements_Expect_No_Crash)
     TEST(Append_To_Vector_Elements_Expect_No_Crash_And_Then_Get_All)
     TEST(Vector_RemoveFrom)
+
+    /* Heap Tests */
+    TEST(Allocate_Heap)
 END_SUITE

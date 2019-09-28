@@ -1,4 +1,4 @@
 my_data_structure:
   script:
     - make clean
-    - make
+    - make run_uni_test
