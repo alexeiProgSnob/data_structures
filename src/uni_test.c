@@ -2,6 +2,10 @@
 #include "sorts.h"
 #include "vector.h"
 #include "heap.h"
+#include "hash.h"
+#include "list.h"
+#include "queue.h"
+#include "safe_queue.h"
 #include <stdio.h>
 
 Compare_Result CompareSizeTPointers(void* _generalTypeA, void* _generalTypeB) {
@@ -195,6 +199,29 @@ UNIT(Allocate_Heap)
     ASSERT_THAT(NULL == newHeap); 
 END_UNIT
 
+UNIT(Allocate_Queue)
+    Queue* newDataS = QueueCreate(10);
+    ASSERT_THAT(NULL != newDataS);
+    QueueDestroy(&newDataS, NULL);
+    ASSERT_THAT(NULL == newDataS); 
+END_UNIT
+
+UNIT(Allocate_SafeQueue)
+    SQueue* newDataS = SQueueCreate(10);
+    ASSERT_THAT(NULL != newDataS);
+    SQueueDestroy(&newDataS, NULL);
+    ASSERT_THAT(NULL == newDataS); 
+END_UNIT
+
+
+UNIT(Allocate_List)
+    List* newDataS = ListCreate();
+    ASSERT_THAT(NULL != newDataS);
+    ListDestroy(&newDataS, NULL);
+    ASSERT_THAT(NULL == newDataS); 
+END_UNIT
+
+
 TEST_SUITE(Test DataStructures)
     /* bubble Sort Tests */
 	TEST(basic_valid_size_t_pointer_bubble_sort_test)
@@ -208,4 +235,13 @@ TEST_SUITE(Test DataStructures)
 
     /* Heap Tests */
     TEST(Allocate_Heap)
+
+    /* Queue Tests */
+    TEST(Allocate_Queue)
+
+    /* SafeQueue Tests */
+    TEST(Allocate_SafeQueue)
+
+    /* List Tests */
+    TEST(Allocate_List)
 END_SUITE

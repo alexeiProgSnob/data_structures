@@ -118,7 +118,7 @@ static int InsertLogToHash(struct _Zlog* _log, log_data* _data_log){
 	}
 	_log->m_log_level = _data_log->m_level;
 	_log->m_fp = fopen(_data_log->m_file_name,"a");
-	if( HashMap_Insert(g_map, _log->m_modual, _log) != MAP_SUCCESS){
+	if( HashMapInsert(g_map, _log->m_modual, _log) != MAP_SUCCESS){
 		return -1;
 	}
 	return 0;
@@ -188,7 +188,7 @@ static void freeModual(void* _value){
 }
 
 static void DestroyLog(){
-    HashMap_Destroy(&(g_map), freeModual, freeLogs);
+    HashMapDestroy(&(g_map), freeModual, freeLogs);
 }
 /******************* LOG FUNCTIONS *******************/
 void zlog_init(const char* _file_name){
@@ -198,7 +198,7 @@ void zlog_init(const char* _file_name){
 		return;
 	}
 	fp = CheckConfigFile(_file_name);
-	g_map = HashMap_Create(23,HashFunc,EqualFunc);
+	g_map = HashMapCreate(23,HashFunc,EqualFunc);
 	if(g_map == NULL){
 		fclose(fp);
 		return;
@@ -211,11 +211,11 @@ void zlog_init(const char* _file_name){
 Zlog zlog_get(const char* _modual){
     Zlog log;
     Map_Result res;
-    res = HashMap_Find(g_map, _modual,(void**) &log);
+    res = HashMapFind(g_map, _modual,(void**) &log);
     if(res == MAP_SUCCESS){
         return log;
     }
-    HashMap_Find(g_map, "#",(void**) &log);
+    HashMapFind(g_map, "#",(void**) &log);
     return log;
 }
 

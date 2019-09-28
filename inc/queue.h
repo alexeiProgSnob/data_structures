@@ -35,7 +35,7 @@ typedef int	(*QueueElementAction)(void* _element, void* _context);
   * @param[in] _initSize - initial capacity, number of elements that can be stored initially.
   * @return Queue* - on success / NULL on fail
   */
-Queue* Queue_Create(size_t _initSize);
+Queue* QueueCreate(size_t _initSize);
 
 /**
  * @brief : free SQueue.
@@ -46,7 +46,7 @@ Queue* Queue_Create(size_t _initSize);
  * 						  If destruction function do not provided user have to
  * 						  delete all elements by him self.
  */
-void Queue_Destroy(Queue** _queue,void (*_elementDestroy)(void* _item));
+void QueueDestroy(Queue** _queue,void (*_elementDestroy)(void* _item));
 
 /**
  * @brief : Inserts a new element to tail of queue .
@@ -58,7 +58,7 @@ void Queue_Destroy(Queue** _queue,void (*_elementDestroy)(void* _item));
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  * @return[failure] : SQUEUE_ELEMENT_UNINITIALIZED_ERROR
  */
-Queue_Result Queue_Insert(Queue* _queue, void* _element);
+Queue_Result QueueInsert(Queue* _queue, void* _element);
 
 
 /**
@@ -70,7 +70,7 @@ Queue_Result Queue_Insert(Queue* _queue, void* _element);
  * @return[success] : SQUEUE_SUCCESS
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  */
-Queue_Result Queue_Remove(Queue* _queue, void** _returnElement);
+Queue_Result QueueRemove(Queue* _queue, void** _returnElement);
 
 /**
  * @brief : check if Queue is empty
@@ -80,7 +80,7 @@ Queue_Result Queue_Remove(Queue* _queue, void** _returnElement);
  * @return[success] : 1 if empty
  * @return[success] : 0 if not empty
  */
-int Queue_IsEmpty(const Queue* _queue);
+int QueueIsEmpty(const Queue* _queue);
 
 
 /**
@@ -93,7 +93,7 @@ int Queue_IsEmpty(const Queue* _queue);
  * @return[success] : SQUEUE_SUCCESS
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  */
-Queue_Result Queue_ForEach(const Queue* _queue,QueueElementAction _action, void* _context);
+Queue_Result QueueForEach(const Queue* _queue,QueueElementAction _action, void* _context);
 
 
 #endif /* __QUEUECFUNC_H__ */

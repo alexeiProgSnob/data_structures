@@ -36,7 +36,7 @@ typedef void (*ElementDestroy)(void* _element);
   * @param[in] _initSize - initial capacity, number of elements that can be stored initially.
   * @return SQueue* - on success / NULL on fail
   */
-SQueue* SQueue_Create(size_t _initSize);
+SQueue* SQueueCreate(size_t _initSize);
 
 /**
  * @brief : free SQueue.
@@ -47,7 +47,7 @@ SQueue* SQueue_Create(size_t _initSize);
  * 						 If destruction function do not provided user have to
  * 						 delete all elements by him self.
  */
-void SQueue_Destroy(SQueue** _squeue,ElementDestroy _desFunc);
+void SQueueDestroy(SQueue** _squeue,ElementDestroy _desFunc);
 
 
 /** 
@@ -60,7 +60,7 @@ void SQueue_Destroy(SQueue** _squeue,ElementDestroy _desFunc);
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  * @return[failure] : SQUEUE_ELEMENT_UNINITIALIZED_ERROR
  */
-SQueue_Result SQueue_Insert(SQueue* _squeue, void* _element);
+SQueue_Result SQueueInsert(SQueue* _squeue, void* _element);
 
 
 /** 
@@ -72,7 +72,7 @@ SQueue_Result SQueue_Insert(SQueue* _squeue, void* _element);
  * @return[success] : SQUEUE_SUCCESS
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  */
-SQueue_Result SQueue_Remove(SQueue* _squeue,void** _returnElement);
+SQueue_Result SQueueRemove(SQueue* _squeue,void** _returnElement);
 
 /** 
  * @brief : check if SQueue is empty
@@ -82,7 +82,7 @@ SQueue_Result SQueue_Remove(SQueue* _squeue,void** _returnElement);
  * @return[success] : 1 if empty
  * @return[success] : 0 if not empty
  */
-int SQueue_IsEmpty(const SQueue* _squeue);
+int SQueueIsEmpty(const SQueue* _squeue);
 
 
 /** 
@@ -92,7 +92,7 @@ int SQueue_IsEmpty(const SQueue* _squeue);
  * @param[in] _action - function to preform on safe queue elements
  * @param[in] _context - context for action function.
  */
-SQueue_Result SQueue_ForEach(const SQueue* _squeue,SQueueElementAction _action, void* _context);
+SQueue_Result SQueueForEach(const SQueue* _squeue,SQueueElementAction _action, void* _context);
 
 
 #endif /* __SAFE_SQUEUE_H__ */

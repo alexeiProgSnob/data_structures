@@ -43,7 +43,7 @@ typedef int	(*KeyValueActionFunction)(const void* _key, void* _value, void* _con
  * @param[in] _keysEqualFunc - equality check function for keys. 
  * @return newly created map or null on failure
  */
-HashMap* HashMap_Create(size_t _capacity, HashFunction _hashFunc, EqualityFunction _keysEqualFunc);
+HashMap* HashMapCreate(size_t _capacity, HashFunction _hashFunc, EqualityFunction _keysEqualFunc);
 
 
 /**
@@ -53,7 +53,7 @@ HashMap* HashMap_Create(size_t _capacity, HashFunction _hashFunc, EqualityFuncti
  * @param[optional] _valDestroy : pointer to function to destroy values 
  * @details optionally destroy all keys and values using user provided functions
  */
-void HashMap_Destroy(HashMap** _map, void (*_keyDestroy)(void* _key), void (*_valDestroy)(void* _value));
+void HashMapDestroy(HashMap** _map, void (*_keyDestroy)(void* _key), void (*_valDestroy)(void* _value));
 
 
 /** 
@@ -62,7 +62,7 @@ void HashMap_Destroy(HashMap** _map, void (*_keyDestroy)(void* _key), void (*_va
  * @param[in] _newCapacity - new capacity shall be rounded to nearest larger prime number.
  * @return MAP_SUCCESS or MAP_ALLOCATION_ERROR
  */
-Map_Result HashMap_Rehash(HashMap *_map, size_t newCapacity);
+Map_Result HashMapRehash(HashMap *_map, size_t newCapacity);
 
 
 /** 
@@ -79,7 +79,7 @@ Map_Result HashMap_Rehash(HashMap *_map, size_t newCapacity);
  * 
  * @warning key must be unique and destinct
  */
-Map_Result HashMap_Insert(HashMap* _map, const void* _key, const void* _value);
+Map_Result HashMapInsert(HashMap* _map, const void* _key, const void* _value);
 
 
 /** 
@@ -96,7 +96,7 @@ Map_Result HashMap_Insert(HashMap* _map, const void* _key, const void* _value);
  * 
  * @warning key must be unique and destinct
  */
-Map_Result HashMap_Remove(HashMap* _map, const void* _searchKey, void** _pKey, void** _pValue);
+Map_Result HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey, void** _pValue);
 
 
 /** 
@@ -112,14 +112,14 @@ Map_Result HashMap_Remove(HashMap* _map, const void* _searchKey, void** _pKey, v
  * 
  * @warning key must be unique and destinct
  */
-Map_Result HashMap_Find(const HashMap* _map, const void* __searchKey, void** _pValue);
+Map_Result HashMapFind(const HashMap* _map, const void* __searchKey, void** _pValue);
 
 
 /**
  * @brief Get number of key-value pairs inserted into the hash map
  * @warning complexity can be O(?)
  */
-size_t HashMap_Size(const HashMap* _map);
+size_t HashMapSize(const HashMap* _map);
 
 
 /** 
@@ -133,7 +133,7 @@ size_t HashMap_Size(const HashMap* _map);
  * @param[in] _context - User provided function pointer to be invoked for each element
  * @returns number of times the user functions was invoked
  */
-size_t HashMap_ForEach(const HashMap* _map, KeyValueActionFunction _action, void* _context);
+size_t HashMapForEach(const HashMap* _map, KeyValueActionFunction _action, void* _context);
 
 
 /*#ifndef NDEBUG*/
@@ -145,7 +145,7 @@ typedef struct Map_Stats {
 	size_t averageChainLength; /* average length of none empty chains */
 } Map_Stats;
 
-Map_Stats HashMap_GetStatistics(const HashMap* _map);
+Map_Stats HashMapGetStatistics(const HashMap* _map);
 /*
 #endif*/ /* NDEBUG */
 
