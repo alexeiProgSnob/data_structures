@@ -50,7 +50,7 @@ $(OBJ)%.o : $(SRC)%.c $(INC)%.h
 $(OBJ)%.o : $(SRC)%.c
 	@echo "Compile $@";$(CC) $(CFLAGS) -c $< -o $@
 
-run_uni_test: $(UTEST_NAME) valgrind
+run_uni_test: $(UTEST_NAME)
 	@echo "run $<";./$<
 
 valgrind: $(UTEST_NAME)
