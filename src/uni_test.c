@@ -4,8 +4,8 @@
 #include "heap.h"
 #include "hash.h"
 #include "list.h"
-#include "queue.h"
-#include "safe_queue.h"
+#include "circular_queue.h"
+#include "circular_safe_queue.h"
 #include <stdio.h>
 
 Compare_Result CompareSizeTPointers(void* _generalTypeA, void* _generalTypeB) {
@@ -200,16 +200,16 @@ UNIT(Allocate_Heap)
 END_UNIT
 
 UNIT(Allocate_Queue)
-    Queue* newDataS = QueueCreate(10);
+    CQueue* newDataS = CQueueCreate(10);
     ASSERT_THAT(NULL != newDataS);
-    QueueDestroy(&newDataS, NULL);
+    CQueueDestroy(&newDataS, NULL);
     ASSERT_THAT(NULL == newDataS); 
 END_UNIT
 
 UNIT(Allocate_SafeQueue)
-    SQueue* newDataS = SQueueCreate(10);
+    CSQueue* newDataS = CSQueueCreate(10);
     ASSERT_THAT(NULL != newDataS);
-    SQueueDestroy(&newDataS, NULL);
+    CSQueueDestroy(&newDataS, NULL);
     ASSERT_THAT(NULL == newDataS); 
 END_UNIT
 

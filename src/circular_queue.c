@@ -15,7 +15,7 @@ struct CQueue {
     size_t m_nItems;   /* <Number of items in CQueue> */
 };
 
-CQueue* QueueCreate(size_t _initSize) {
+CQueue* CQueueCreate(size_t _initSize) {
     CQueue* pQue;
     void** mPQue;
     if (_initSize == 0) {
@@ -41,7 +41,7 @@ CQueue* QueueCreate(size_t _initSize) {
     return pQue;
 }
 
-void QueueDestroy(CQueue** _queue, void (*_elementDestroy)(void* _item)) {
+void CQueueDestroy(CQueue** _queue, void (*_elementDestroy)(void* _item)) {
     size_t idx;
     if (_queue != NULL && *_queue != NULL) {
         if (_elementDestroy != NULL) {
@@ -56,7 +56,7 @@ void QueueDestroy(CQueue** _queue, void (*_elementDestroy)(void* _item)) {
     return;
 }
 
-CQueue_Result QueueInsert(CQueue* _queue, void* _element) {
+CQueue_Result CQueueInsert(CQueue* _queue, void* _element) {
     if (_queue == NULL || _element == NULL) {
         return QUEUE_UNITIALIZED_ERROR;
     }
@@ -75,7 +75,7 @@ CQueue_Result QueueInsert(CQueue* _queue, void* _element) {
     return QUEUE_SUCCESS;
 }
 
-CQueue_Result QueueRemove(CQueue* _queue, void** _returnElement) {
+CQueue_Result CQueueRemove(CQueue* _queue, void** _returnElement) {
     if (_queue == NULL) {
         return QUEUE_UNITIALIZED_ERROR;
     }
@@ -92,7 +92,7 @@ CQueue_Result QueueRemove(CQueue* _queue, void** _returnElement) {
     return QUEUE_SUCCESS;
 }
 
-int QueueIsEmpty(const CQueue* _queue) {
+int CQueueIsEmpty(const CQueue* _queue) {
     if (_queue == NULL) {
         return 1;
     }
@@ -103,7 +103,7 @@ int QueueIsEmpty(const CQueue* _queue) {
     return 0;
 }
 
-CQueue_Result QueueForEach(const CQueue* _queue, QueueElementAction _action,
+CQueue_Result CQueueForEach(const CQueue* _queue, CQueueElementAction _action,
                            void* _context) {
     size_t i;
     if (_queue == NULL || _action == NULL) {

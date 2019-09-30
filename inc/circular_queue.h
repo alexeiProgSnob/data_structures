@@ -27,25 +27,25 @@ typedef enum CQueue_Result {
     QUEUE_ELEMENT_UNITIALIZED_ERROR
 } CQueue_Result;
 
-typedef int	(*QueueElementAction)(void* _element, void* _context);
+typedef int	(*CQueueElementAction)(void* _element, void* _context);
 
  /**
   * @brief Create a new queue with given initialize size.
   * @param[in] _initSize - initial capacity, number of elements that can be stored initially.
   * @return CQueue* - on success / NULL on fail
   */
-CQueue* QueueCreate(size_t _initSize);
+CQueue* CQueueCreate(size_t _initSize);
 
 /**
- * @brief : free SQueue.
- * @details : free SQueue if _desFunc is NULL.
+ * @brief : free CQueue.
+ * @details : free CQueue if _desFunc is NULL.
  *
  * @param[in] _squeue 	- safe queue.
  * @param[in] _desFunc 	- a pointer to a function to destroy elements.
  * 						  If destruction function do not provided user have to
  * 						  delete all elements by him self.
  */
-void QueueDestroy(CQueue** _queue,void (*_elementDestroy)(void* _item));
+void CQueueDestroy(CQueue** _queue,void (*_elementDestroy)(void* _item));
 
 /**
  * @brief : Inserts a new element to tail of queue .
@@ -57,7 +57,7 @@ void QueueDestroy(CQueue** _queue,void (*_elementDestroy)(void* _item));
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  * @return[failure] : SQUEUE_ELEMENT_UNINITIALIZED_ERROR
  */
-CQueue_Result QueueInsert(CQueue* _queue, void* _element);
+CQueue_Result CQueueInsert(CQueue* _queue, void* _element);
 
 
 /**
@@ -69,7 +69,7 @@ CQueue_Result QueueInsert(CQueue* _queue, void* _element);
  * @return[success] : SQUEUE_SUCCESS
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  */
-CQueue_Result QueueRemove(CQueue* _queue, void** _returnElement);
+CQueue_Result CQueueRemove(CQueue* _queue, void** _returnElement);
 
 /**
  * @brief : check if CQueue is empty
@@ -79,7 +79,7 @@ CQueue_Result QueueRemove(CQueue* _queue, void** _returnElement);
  * @return[success] : 1 if empty
  * @return[success] : 0 if not empty
  */
-int QueueIsEmpty(const CQueue* _queue);
+int CQueueIsEmpty(const CQueue* _queue);
 
 
 /**
@@ -92,7 +92,7 @@ int QueueIsEmpty(const CQueue* _queue);
  * @return[success] : SQUEUE_SUCCESS
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  */
-CQueue_Result QueueForEach(const CQueue* _queue,QueueElementAction _action, void* _context);
+CQueue_Result CQueueForEach(const CQueue* _queue, CQueueElementAction _action, void* _context);
 
 
 #endif /* __CIRCULAR_QUEUE_H__ */

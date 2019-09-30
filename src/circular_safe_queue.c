@@ -4,18 +4,18 @@
  *  @bug no bugs known.
  */
 
-#include "safe_queue.h"
+#include "circular_safe_queue.h"
 #include <pthread.h>   /*< mutex >*/
 #include <semaphore.h> /*< semaphore >*/
 #include <stdlib.h>    /*< malloc >*/
 
-struct SQueue {
-    void** m_elements; /* <Array of elements that saved in SQueue> */
+struct CSQueue {
+    void** m_elements; /* <Array of elements that saved in CSQueue> */
 
-    size_t m_size;   /* <size of SQueue> */
+    size_t m_size;   /* <size of CSQueue> */
     size_t m_head;   /* <Index of head in m_elements> */
     size_t m_tail;   /* <Index of tail in m_elements> */
-    size_t m_nItems; /* <Number of items in SQueue> */
+    size_t m_nItems; /* <Number of items in CSQueue> */
 
     sem_t m_full;            /* <samaphore condition for full queue> */
     sem_t m_empty;           /* <samaphore condition for empty queue> */
@@ -27,25 +27,25 @@ typedef struct Destroy {
                               all element> */
 } Destroy;
 
-static SQueue* _InitSQueue(SQueue* _squeue, size_t _initSize);
-static SQueue* _InitSemMutex(SQueue* _squeue, size_t _initSize);
+static CSQueue* _InitCSQueue(CSQueue* _squeue, size_t _initSize);
+static CSQueue* _InitSemMutex(CSQueue* _squeue, size_t _initSize);
 static int _MyActionDestroy(void* _element, void* _context);
-static void* _GetElement(SQueue* _squeue);
-static void _PutElement(SQueue* _squeue, void* _element);
+static void* _GetElement(CSQueue* _squeue);
+static void _PutElement(CSQueue* _squeue, void* _element);
 
 /**
  * @brief Create a new Squeue with given initialize size.
  * @param[in] _initSize - initial capacity, number of elements that can be
  * stored initially.
- * @return SQueue* - on success / NULL on fail
+ * @return CSQueue* - on success / NULL on fail
  */
-SQueue* SQueueCreate(size_t _initSize) {
-    SQueue* pQue;
+CSQueue* CSQueueCreate(size_t _initSize) {
+    CSQueue* pQue;
     if (_initSize == 0) {
         return NULL;
     }
 
-    pQue = (SQueue*)malloc(sizeof(SQueue));
+    pQue = (CSQueue*)malloc(sizeof(CSQueue));
     if (pQue == NULL) {
         return NULL;
     }
@@ -56,22 +56,22 @@ SQueue* SQueueCreate(size_t _initSize) {
         return NULL;
     }
 
-    return _InitSQueue(pQue, _initSize);
+    return _InitCSQueue(pQue, _initSize);
 }
 
 /**
- * @brief : free SQueue.
- * @details : free SQueue if _elementDestroy is NULL.
+ * @brief : free CSQueue.
+ * @details : free CSQueue if _elementDestroy is NULL.
  *
  * @param[in] _squeue - safe queue.
  * @param[in] _elementDestroy - a pointer to a function to destroy elements.
  */
-void SQueueDestroy(SQueue** _squeue, ElementDestroy _desFunc) {
+void CSQueueDestroy(CSQueue** _squeue, ElementDestroy _desFunc) {
     Destroy des;
     if (_squeue != NULL && *_squeue != NULL) {
         if (_desFunc != NULL) {
             des.m_func = _desFunc;
-            SQueueForEach(*_squeue, _MyActionDestroy, &des);
+            CSQueueForEach(*_squeue, _MyActionDestroy, &des);
         }
         pthread_mutex_destroy(&((*_squeue)->m_mutex));
         sem_destroy(&((*_squeue)->m_full));
@@ -94,7 +94,7 @@ void SQueueDestroy(SQueue** _squeue, ElementDestroy _desFunc) {
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  * @return[failure] : SQUEUE_ELEMENT_UNINITIALIZED_ERROR
  */
-SQueue_Result SQueueInsert(SQueue* _squeue, void* _element) {
+CSQueue_Result CSQueueInsert(CSQueue* _squeue, void* _element) {
     if (_squeue == NULL) {
         return SQUEUE_UNITIALIZED_ERROR;
     }
@@ -115,7 +115,7 @@ SQueue_Result SQueueInsert(SQueue* _squeue, void* _element) {
  * @return[success] : a pointer to the element.
  * @return[failure] : NULL if _squeue is NULL
  */
-SQueue_Result SQueueRemove(SQueue* _squeue, void** _returnElement) {
+CSQueue_Result CSQueueRemove(CSQueue* _squeue, void** _returnElement) {
     if (_squeue == NULL || _returnElement == NULL) {
         return SQUEUE_UNITIALIZED_ERROR;
     }
@@ -125,14 +125,14 @@ SQueue_Result SQueueRemove(SQueue* _squeue, void** _returnElement) {
 }
 
 /**
- * @brief : check if SQueue is empty
+ * @brief : check if CSQueue is empty
  *
  * @param[in] _squeue - safe queue.
  *
  * @return[success] : 1 if empty
  * @return[success] : 0 if not empty
  */
-int SQueueIsEmpty(const SQueue* _squeue) {
+int CSQueueIsEmpty(const CSQueue* _squeue) {
     if (_squeue == NULL) {
         return 1;
     }
@@ -145,13 +145,13 @@ int SQueueIsEmpty(const SQueue* _squeue) {
 }
 
 /**
- * @brief : run on all elements and preform SQueueElementAction function.
+ * @brief : run on all elements and preform CSQueueElementAction function.
  *
  * @param[in]  _squeue - safe queue.
  * @param[in] _action - function to preform on safe queue elements
  * @param[in] _context - context for action function.
  */
-SQueue_Result SQueueForEach(const SQueue* _squeue, SQueueElementAction _action,
+CSQueue_Result CSQueueForEach(const CSQueue* _squeue, CSQueueElementAction _action,
                             void* _context) {
     size_t i;
     size_t end;
@@ -159,16 +159,16 @@ SQueue_Result SQueueForEach(const SQueue* _squeue, SQueueElementAction _action,
         return SQUEUE_UNITIALIZED_ERROR;
     }
 
-    pthread_mutex_lock(&(((SQueue*)_squeue)->m_mutex));
+    pthread_mutex_lock(&(((CSQueue*)_squeue)->m_mutex));
     i = (_squeue->m_head);
     end = (_squeue->m_tail);
-    pthread_mutex_unlock(&(((SQueue*)_squeue)->m_mutex));
+    pthread_mutex_unlock(&(((CSQueue*)_squeue)->m_mutex));
 
     while (i != end + 1) {
         i = (i + 1) % _squeue->m_size;
-        pthread_mutex_lock(&(((SQueue*)_squeue)->m_mutex));
+        pthread_mutex_lock(&(((CSQueue*)_squeue)->m_mutex));
         _action(_squeue->m_elements[i], _context);
-        pthread_mutex_unlock(&(((SQueue*)_squeue)->m_mutex));
+        pthread_mutex_unlock(&(((CSQueue*)_squeue)->m_mutex));
     }
 
     return SQUEUE_SUCCESS;
@@ -180,7 +180,7 @@ static int _MyActionDestroy(void* _element, void* _context) {
     return 1;
 }
 
-static SQueue* _InitSemMutex(SQueue* _squeue, size_t _initSize) {
+static CSQueue* _InitSemMutex(CSQueue* _squeue, size_t _initSize) {
     int ret;
 
     ret = pthread_mutex_init(&(_squeue->m_mutex), NULL);
@@ -210,7 +210,7 @@ static SQueue* _InitSemMutex(SQueue* _squeue, size_t _initSize) {
     return _squeue;
 }
 
-static SQueue* _InitSQueue(SQueue* _squeue, size_t _initSize) {
+static CSQueue* _InitCSQueue(CSQueue* _squeue, size_t _initSize) {
 
     _squeue = _InitSemMutex(_squeue, _initSize);
     if (_squeue == NULL) {
@@ -225,7 +225,7 @@ static SQueue* _InitSQueue(SQueue* _squeue, size_t _initSize) {
     return _squeue;
 }
 
-static void* _GetElement(SQueue* _squeue) {
+static void* _GetElement(CSQueue* _squeue) {
     void* element;
 
     sem_wait(&(_squeue->m_full));
@@ -241,7 +241,7 @@ static void* _GetElement(SQueue* _squeue) {
     return element;
 }
 
-static void _PutElement(SQueue* _squeue, void* _element) {
+static void _PutElement(CSQueue* _squeue, void* _element) {
     sem_wait(&(_squeue->m_empty));
 
     pthread_mutex_lock(&(_squeue->m_mutex));
