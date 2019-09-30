@@ -8,6 +8,8 @@ struct Heap {
     HeapDataCompareFunc m_compareFunc;
 };
 
+static Vector_Result _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult);
+
 /** 
  * @brief Create a new heap with given size.
  * @param[in] _heapSize - Expected max capacity.
@@ -68,24 +70,48 @@ void HeapDestroy(Heap** _heap, void (*_elementDestroy)(void* _item)) {
  * @return HEAP_SUCCESS, and other on error
  */
 Heap_Result HeapInsert(Heap* _heap, void* _data) {
-    size_t lastPlace = 0;
-    size_t parentPlace = 0;
-    void* comapreData = NULL;
+    Heap_Data_Compare_Result expectedCopareResult;
     if (NULL == _heap || NULL == _data) {
         return HEAP_UNINITIALIZED_ERROR;
     }
 
-    lastPlace = VectorSize(_heap->m_vector);
-    if (0 != lastPlace) {
-        parentPlace = (lastPlace % 2) == 0 ? lastPlace/2 - 1: lastPlace/2;
-        
-    } else {
-        VectorAppend(_heap->m_vector, _data);
+    expectedCopareResult = _heap->m_heapType == HEAP_TYPE_MAX ? HEAP_COMPARE_BIGGER : HEAP_COMPARE_SMALLER;
+    if (_FindPlaceToInsert(_heap, _data, VectorSize(_heap->m_vector), expectedCopareResult) != VECTOR_SUCCESS) {
+        return HEAP_GENERAL_ERROR;
     }
     return HEAP_SUCCESS;
-
 }
 
-static void FindPlaceToInsert(Heap* _heap, void* _data, ) {
+static Vector_Result _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult) {
+    void* comapreData = NULL;
+    Vector_Result vectorResult = VECTOR_INDEX_OUT_OF_BOUNDS_ERROR;
+    size_t parentPlace = 0;
+    size_t vectorSize = VectorSize(_heap->m_vector);
+    if (0 == _lastPlace) {
+        if (0 == vectorSize) {
+            return VectorAppend(_heap->m_vector, _data);
+        }
+        return VectorSet(_heap->m_vector, _lastPlace, _data, NULL);
+    }
+    
+    parentPlace = (_lastPlace % 2) == 0 ? _lastPlace/2 - 1: _lastPlace/2;
+    vectorResult = VectorGet(_heap->m_vector, parentPlace, &comapreData);
+    if (vectorResult != VECTOR_SUCCESS) {
+        return vectorResult;
+    }
 
+    if (_expectedCompareResult == _heap->m_compareFunc(_data, comapreData)) {
+        if (_lastPlace == vectorSize) {
+            VectorAppend(_heap->m_vector, comapreData);
+        } else {
+            VectorSet(_heap->m_vector, _lastPlace, comapreData, NULL);
+        }
+        return _FindPlaceToInsert(_heap, _data, parentPlace, _expectedCompareResult);
+    }
+
+    if (_lastPlace == vectorSize) {
+        return VectorAppend(_heap->m_vector, _data);
+    } else {
+        return VectorSet(_heap->m_vector, _lastPlace, _data, NULL);
+    }
 }

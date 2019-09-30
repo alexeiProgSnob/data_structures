@@ -60,6 +60,16 @@ Compare_Result CompareSizeT(void* _generalTypeA, void* _generalTypeB) {
 }
 
 
+Heap_Data_Compare_Result CompareSizeTHeap(const void* _generalTypeA, const void* _generalTypeB) {
+    const size_t* typeA = (const size_t*) _generalTypeA;
+    const size_t* typeB = (const size_t*) _generalTypeB;
+    if (*typeA > *typeB) {
+        return HEAP_COMPARE_BIGGER;
+    }
+
+    return HEAP_COMPARE_SMALLER;
+}
+
 void SwapToSizeT(void* _generalTypeA, void* _generalTypeB) {
     size_t* typeA = (size_t*) _generalTypeA;
     size_t* typeB = (size_t*) _generalTypeB;
@@ -199,6 +209,26 @@ UNIT(Allocate_Heap)
     ASSERT_THAT(NULL == newHeap); 
 END_UNIT
 
+UNIT(Append_To_Heap_Elements_Expect_No_Crash)
+    size_t arr[] = {2,1,4,3};
+    size_t i = 0;
+    Heap* newData = HeapCreate(10, HEAP_TYPE_MIN, CompareSizeTHeap);
+    Heap_Result resultChecker = HEAP_SUCCESS;
+    ASSERT_THAT(NULL != newData);
+/*  TODO:
+    ASSERT_THAT(VectorCapacity(newVector) == 10); 
+*/
+    for (i = 0; i < sizeof(arr)/sizeof(size_t) ; ++i) {
+        resultChecker = HeapInsert(newData, arr + i);
+        ASSERT_THAT(HEAP_SUCCESS == resultChecker);
+    }
+/*  TODO: 
+    ASSERT_THAT(VectorSize(newVector) == sizeof(arr)/sizeof(size_t));
+*/
+    HeapDestroy(&newData, NULL);
+    ASSERT_THAT(NULL == newData); 
+END_UNIT
+
 UNIT(Allocate_Queue)
     CQueue* newDataS = CQueueCreate(10);
     ASSERT_THAT(NULL != newDataS);
@@ -235,7 +265,7 @@ TEST_SUITE(Test DataStructures)
 
     /* Heap Tests */
     TEST(Allocate_Heap)
-
+    TEST(Append_To_Heap_Elements_Expect_No_Crash)
     /* Queue Tests */
     TEST(Allocate_Queue)
 

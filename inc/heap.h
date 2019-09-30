@@ -19,7 +19,7 @@ typedef struct Heap Heap;
 typedef enum _Heap_Result {
 	HEAP_SUCCESS = 0,
 	HEAP_UNINITIALIZED_ERROR, 		/**< Uninitialized map error 	*/
-	HEAP_KEY_NULL_ERROR, 			/**< Key was null 				*/
+    HEAP_GENERAL_ERROR,
 	HEAP_ALLOCATION_ERROR 			/**< Allocation error 	 		*/
 } Heap_Result;
 
