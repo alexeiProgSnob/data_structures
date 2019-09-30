@@ -1,5 +1,5 @@
 ARCH := ${ARGS}
- 
+# clang-format -style="{BasedOnStyle: llvm, IndentWidth: 4, AlignTrailingComments: true, PointerAlignment: Left}"
 ifeq ($(ARCH), )
 ARCH := $(shell getconf LONG_BIT)
 endif
@@ -19,7 +19,7 @@ CFLAGS 		:= $(C_FLAGS_$(ARCH)) -fPIC -pedantic -ansi -Werror -Wall $(INCLUDES) -
 
 OBJECTS 	:= $(OBJ)log4c.o 
 OBJECTS 	+= $(OBJ)hash.o 
-OBJECTS		+= $(OBJ)queue.o
+OBJECTS		+= $(OBJ)circular_queue.o
 OBJECTS		+= $(OBJ)safe_queue.o
 OBJECTS		+= $(OBJ)heap.o
 OBJECTS		+= $(OBJ)vector.o
