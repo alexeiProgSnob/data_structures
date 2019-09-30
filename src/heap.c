@@ -60,3 +60,32 @@ void HeapDestroy(Heap** _heap, void (*_elementDestroy)(void* _item)) {
     free(*_heap);
     *_heap = NULL;
 }
+
+/**
+ * @brief insert new data into heap
+ * @param[in] _heap - Heap.
+ * @params[in] _data - pointer to the data
+ * @return HEAP_SUCCESS, and other on error
+ */
+Heap_Result HeapInsert(Heap* _heap, void* _data) {
+    size_t lastPlace = 0;
+    size_t parentPlace = 0;
+    void* comapreData = NULL;
+    if (NULL == _heap || NULL == _data) {
+        return HEAP_UNINITIALIZED_ERROR;
+    }
+
+    lastPlace = VectorSize(_heap->m_vector);
+    if (0 != lastPlace) {
+        parentPlace = (lastPlace % 2) == 0 ? lastPlace/2 - 1: lastPlace/2;
+        
+    } else {
+        VectorAppend(_heap->m_vector, _data);
+    }
+    return HEAP_SUCCESS;
+
+}
+
+static void FindPlaceToInsert(Heap* _heap, void* _data, ) {
+
+}

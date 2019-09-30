@@ -68,4 +68,12 @@ Heap* HeapCreate(size_t _heapSize, Heap_Type _heapType, HeapDataCompareFunc _com
  * @return void
  */
 void HeapDestroy(Heap** _heap, void (*_elementDestroy)(void* _item));
+
+/**
+ * @brief insert new data into heap
+ * @param[in] _heap - Heap.
+ * @params[in] _data - pointer to the data
+ * @return HEAP_SUCCESS, and other on error
+ */
+Heap_Result HeapInsert(Heap* _heap, void* _data);
 #endif /* __HEAP_H__ */
