@@ -10,23 +10,11 @@
  * @Update by Alexei Radashkovsky on 08/20/17
  * @bug no bugs known.
  */
-
+#include "data_structure_error.h"
 #include <stddef.h>  /*< size_t >*/
 
 typedef struct Vector Vector;
 typedef int	(*VectorElementAction)(void* _element, size_t _index, void* _context);
-
-typedef enum Vector_Result {
-	VECTOR_SUCCESS,
-	VECTOR_UNINITIALIZED_ERROR,				/*< Uninitialized vector error >*/
-	VECTOR_INDEX_OUT_OF_BOUNDS_ERROR,		/*< Idex in get at set to vector is out of bounds >*/
-	VECTOR_UNINITIALIZED_ITEM_ERROR,		/*< Uninitialized item error >*/
-	VECTOR_REALLOCATION_ERROR,				/*< realloc error on grow/shrink >*/
-	VECTOR_OVERFLOW_ERROR,					/*< There is no space to insert items and no reallocte >*/
-	VECTOR_UNDERFLOW_ERROR					/*< There is no items in vector >*/
-
-	/* Add more as needed by your implementation */
-} Vector_Result;
 
 /**
  * @brief Dynamically create a new vector object of given capacity and
@@ -53,27 +41,27 @@ void VectorDestroy(Vector** _vector, void (*_elementDestroy)(void* _item));
  * @param[in] _vector - Vector to append integer to.
  * @param[in] _item - Item to add.
  * @return success or error code
- * @return[success] : VECTOR_SUCCESS
- * @return[failure] : VECTOR_UNINITIALIZED_ERROR
+ * @return[success] : DS_SUCCESS
+ * @return[failure] : DS_UNINITIALIZED_ERROR
  * @return[failure] : VECTOR_UINITIALIZED_ITEM_ERROR
- * @return[failure] : VECTOR_REALLOCATION_ERROR
- * @return[failure] : VECTOR_OVERFLOW_ERROR - if _blockSize was zero at VectorCreate
+ * @return[failure] : DS_REALLOCATION_ERROR
+ * @return[failure] : DS_OVERFLOW_ERROR - if _blockSize was zero at VectorCreate
  * 											  and need no increase the vector size
  */
-Vector_Result VectorAppend(Vector* _vector, void* _item);
+aps_ds_error VectorAppend(Vector* _vector, void* _item);
 
 /**
  * @brief Delete an Element from the back of the Vector.
  * @param[in] _vector - Vector to delete integer from.
  * @param[out] _pValue - pointer to variable that will receive deleted item value
  * @return success or error code
- * @return[success] : VECTOR_SUCCESS
- * @return[failure] : VECTOR_UNINITIALIZED_ERROR
- * @return[failure] : VECTOR_UNDERFLOW_ERROR
- * @return[failure] : VECTOR_REALLOCATION_ERROR
+ * @return[success] : DS_SUCCESS
+ * @return[failure] : DS_UNINITIALIZED_ERROR
+ * @return[failure] : DS_UNDERFLOW_ERROR
+ * @return[failure] : DS_REALLOCATION_ERROR
  * @warning _item can't be null. this will be assertion violation
  */
-Vector_Result VectorRemove(Vector* _vector, void** _pValue);
+aps_ds_error VectorRemove(Vector* _vector, void** _pValue);
 
 /**
  * @brief Remove and get the value of item at specific index from the the Vector
@@ -81,13 +69,13 @@ Vector_Result VectorRemove(Vector* _vector, void** _pValue);
  * @param[in] _index - index of item to remove value from. the index of first element is 0
  * @param[out] _pValue - pointer to variable that will receive the item's value.
  * @return success or error code
- * @return[success] : VECTOR_SUCCESS
- * @return[failure] : VECTOR_UNINITIALIZED_ERROR
- * @return[failure] : VECTOR_INDEX_OUT_OF_BOUNDS_ERROR
+ * @return[success] : DS_SUCCESS
+ * @return[failure] : DS_UNINITIALIZED_ERROR
+ * @return[failure] : DS_OUT_OF_BOUNDS_ERROR
  *
  * @warning Index starts from 0.
  */
-Vector_Result VectorRemoveFrom(Vector* _vector, size_t _index, void** _pValue);
+aps_ds_error VectorRemoveFrom(Vector* _vector, size_t _index, void** _pValue);
 
 /**
  * @brief Get value of item at specific index from the the Vector
@@ -95,13 +83,13 @@ Vector_Result VectorRemoveFrom(Vector* _vector, size_t _index, void** _pValue);
  * @param[in] _index - index of item to get value from. the index of first element is 0
  * @param[out] _pValue - pointer to variable that will receive the item's value.
  * @return success or error code
- * @return[success] : VECTOR_SUCCESS
- * @return[failure] : VECTOR_UNINITIALIZED_ERROR
- * @return[failure] : VECTOR_INDEX_OUT_OF_BOUNDS_ERROR
+ * @return[success] : DS_SUCCESS
+ * @return[failure] : DS_UNINITIALIZED_ERROR
+ * @return[failure] : DS_OUT_OF_BOUNDS_ERROR
  *
  * @warning Index starts from 0.
  */
-Vector_Result VectorGet(const Vector* _vector, size_t _index, void** _pValue);
+aps_ds_error VectorGet(const Vector* _vector, size_t _index, void** _pValue);
 
 /**
  * @brief Set an item at specific index to a new value.
@@ -109,13 +97,13 @@ Vector_Result VectorGet(const Vector* _vector, size_t _index, void** _pValue);
  * @param[in] _index - index of an existing item.
  * @param[in] _value - new value to set.
  * @return success or error code
- * @return[success] : VECTOR_SUCCESS
- * @return[failure] : VECTOR_UNINITIALIZED_ERROR
- * @return[failure] : VECTOR_INDEX_OUT_OF_BOUNDS_ERROR
+ * @return[success] : DS_SUCCESS
+ * @return[failure] : DS_UNINITIALIZED_ERROR
+ * @return[failure] : DS_OUT_OF_BOUNDS_ERROR
  *
  * @warning Index starts from 0.
  */
-Vector_Result VectorSet(Vector* _vector, size_t _index, void*  _value, void** _prevValue);
+aps_ds_error VectorSet(Vector* _vector, size_t _index, void*  _value, void** _prevValue);
 
 /**
  * @brief Get the number of actual items currently in the vector.

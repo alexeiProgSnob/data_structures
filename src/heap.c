@@ -1,5 +1,6 @@
 #include "heap.h"
 #include "vector.h"
+#include "ds_assert.h"
 #include <stdlib.h> /*< malloc >*/
 
 struct Heap {
@@ -8,7 +9,7 @@ struct Heap {
     HeapDataCompareFunc m_compareFunc;
 };
 
-static Vector_Result _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult);
+static aps_ds_error _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult);
 
 /** 
  * @brief Create a new heap with given size.
@@ -67,24 +68,91 @@ void HeapDestroy(Heap** _heap, void (*_elementDestroy)(void* _item)) {
  * @brief insert new data into heap
  * @param[in] _heap - Heap.
  * @params[in] _data - pointer to the data
- * @return HEAP_SUCCESS, and other on error
+ * @return DS_SUCCESS, and other on error
  */
-Heap_Result HeapInsert(Heap* _heap, void* _data) {
+aps_ds_error HeapPush(Heap* _heap, void* _data) {
     Heap_Data_Compare_Result expectedCopareResult;
-    if (NULL == _heap || NULL == _data) {
-        return HEAP_UNINITIALIZED_ERROR;
+    if (NULL == _heap) {
+        return DS_UNINITIALIZED_ERROR;
+    }
+
+    if (NULL == _data) {
+        return DS_UNINITIALIZED_ITEM_ERROR;
     }
 
     expectedCopareResult = _heap->m_heapType == HEAP_TYPE_MAX ? HEAP_COMPARE_BIGGER : HEAP_COMPARE_SMALLER;
-    if (_FindPlaceToInsert(_heap, _data, VectorSize(_heap->m_vector), expectedCopareResult) != VECTOR_SUCCESS) {
-        return HEAP_GENERAL_ERROR;
+    /* TODO: fix error hendeling */
+    if (_FindPlaceToInsert(_heap, _data, VectorSize(_heap->m_vector), expectedCopareResult) != DS_SUCCESS) {
+        return DS_GENERAL_ERROR;
     }
-    return HEAP_SUCCESS;
+    return DS_SUCCESS;
 }
 
-static Vector_Result _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult) {
+/**
+ * @brief Remove elemnt from the top
+ * @param[in] _heap - Heap.
+ * @param[out]_pValue - pointer where to store the pointer to the value 
+ * @return DS_SUCCESS, other error on failure
+ */
+aps_ds_error HeapPop(Heap* _heap, void** _pValue) {
+    aps_ds_error vectorResult = DS_UNINITIALIZED_ERROR;
+    void* lastElement = NULL;
+    if (NULL == _heap || NULL == _pValue) {
+        return DS_UNINITIALIZED_ERROR;
+    }
+
+    if (0 == HeapSize(_heap)) {
+        return DS_OUT_OF_BOUNDS_ERROR;
+    }
+
+    vectorResult = VectorGet(_heap->m_vector, 0, _pValue);
+    DS_ASSERT_EQUAL(vectorResult, DS_SUCCESS);
+
+    vectorResult = VectorRemove(_heap->m_vector, &lastElement);
+    DS_ASSERT_EQUAL(vectorResult, DS_SUCCESS);
+
+    vectorResult = VectorSet
+    return DS_SUCCESS;
+}
+
+/**
+ * @brief Get the top value in heap do not remove the value
+ * @param[in] _heap - Heap.
+ * @return the address to the value on success, NULL on failure
+ */
+const void* HeapGetTopValue(const Heap* _heap) {
+    void* value = NULL;
+    if (NULL == _heap) {
+        return NULL;
+    }
+
+    if (0 == VectorSize(_heap->m_vector)) {
+        return NULL;
+    }
+
+    if (DS_SUCCESS != VectorGet(_heap->m_vector, 0, &value)) {
+        return NULL;
+    }
+
+    return value;
+}
+
+
+/**
+ * @brief Get the number of elements that inserted into heap
+ * @param[in] _heap - Heap.
+ * @return the size, -1 on failure
+ */
+ssize_t HeapSize(const Heap* _heap) {
+    if (NULL == _heap) {
+        return -1;
+    }
+    return VectorSize(_heap->m_vector);
+}
+
+static aps_ds_error _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult) {
     void* comapreData = NULL;
-    Vector_Result vectorResult = VECTOR_INDEX_OUT_OF_BOUNDS_ERROR;
+    aps_ds_error vectorResult = DS_OUT_OF_BOUNDS_ERROR;
     size_t parentPlace = 0;
     size_t vectorSize = VectorSize(_heap->m_vector);
     if (0 == _lastPlace) {
@@ -96,7 +164,7 @@ static Vector_Result _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPl
     
     parentPlace = (_lastPlace % 2) == 0 ? _lastPlace/2 - 1: _lastPlace/2;
     vectorResult = VectorGet(_heap->m_vector, parentPlace, &comapreData);
-    if (vectorResult != VECTOR_SUCCESS) {
+    if (vectorResult != DS_SUCCESS) {
         return vectorResult;
     }
 

@@ -124,12 +124,12 @@ UNIT(Append_To_Vector_Elements_Expect_No_Crash)
     size_t arr[] = {2,1,4,3};
     size_t i = 0;
     Vector* newVector = VectorCreate(10, 5);
-    Vector_Result resultChecker = VECTOR_UNINITIALIZED_ERROR;
+    aps_ds_error resultChecker = DS_UNINITIALIZED_ERROR;
     ASSERT_THAT(NULL != newVector);
     ASSERT_THAT(VectorCapacity(newVector) == 10);
     for (i = 0; i < sizeof(arr)/sizeof(size_t) ; ++i) {
         resultChecker = VectorAppend(newVector, arr + i);
-        ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+        ASSERT_THAT(DS_SUCCESS == resultChecker);
     }
 
     ASSERT_THAT(VectorSize(newVector) == sizeof(arr)/sizeof(size_t));
@@ -143,22 +143,22 @@ UNIT(Append_To_Vector_Elements_Expect_No_Crash_And_Then_Get_All)
     size_t numOfElements = sizeof(arr) / sizeof(size_t);
     size_t* value = NULL;
     Vector* newVector = VectorCreate(10, 5);
-    Vector_Result resultChecker = VECTOR_UNINITIALIZED_ERROR;
+    aps_ds_error resultChecker = DS_UNINITIALIZED_ERROR;
     ASSERT_THAT(NULL != newVector);
     for (i = 0; i < numOfElements; ++i) {
         resultChecker = VectorAppend(newVector, arr + i);
-        ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+        ASSERT_THAT(DS_SUCCESS == resultChecker);
     }
 
     for (i = 0; i < numOfElements; ++i) {
         resultChecker = VectorGet(newVector, i, (void**)&value);
-        ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+        ASSERT_THAT(DS_SUCCESS == resultChecker);
         ASSERT_THAT(*value == arr[i]);
     }
 
     for (i = numOfElements; i > 0; --i) {
         resultChecker = VectorRemove(newVector, (void**)&value);
-        ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+        ASSERT_THAT(DS_SUCCESS == resultChecker);
         ASSERT_THAT(*value == arr[i - 1]);
     }
     
@@ -172,30 +172,30 @@ UNIT(Vector_RemoveFrom)
     size_t numOfElements = sizeof(arr) / sizeof(size_t);
     size_t* value = NULL;
     Vector* newVector = VectorCreate(10, 5);
-    Vector_Result resultChecker = VECTOR_UNINITIALIZED_ERROR;
+    aps_ds_error resultChecker = DS_UNINITIALIZED_ERROR;
     ASSERT_THAT(NULL != newVector);
     for (i = 0; i < numOfElements; ++i) {
         resultChecker = VectorAppend(newVector, arr + i);
-        ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+        ASSERT_THAT(DS_SUCCESS == resultChecker);
     }
 
     resultChecker = VectorRemoveFrom(newVector, 1, (void**)&value);
-    ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+    ASSERT_THAT(DS_SUCCESS == resultChecker);
     ASSERT_THAT(*value == arr[1]);
     
     resultChecker = VectorRemoveFrom(newVector, 1, (void**)&value);
-    ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+    ASSERT_THAT(DS_SUCCESS == resultChecker);
     ASSERT_THAT(*value == arr[2]);
 
     resultChecker = VectorRemoveFrom(newVector, 1, (void**)&value);
-    ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+    ASSERT_THAT(DS_SUCCESS == resultChecker);
     ASSERT_THAT(*value == arr[3]);
 
     resultChecker = VectorRemoveFrom(newVector, 1, (void**)&value);
-    ASSERT_THAT(VECTOR_INDEX_OUT_OF_BOUNDS_ERROR == resultChecker);
+    ASSERT_THAT(DS_OUT_OF_BOUNDS_ERROR == resultChecker);
 
     resultChecker = VectorRemoveFrom(newVector, 0, (void**)&value);
-    ASSERT_THAT(VECTOR_SUCCESS == resultChecker);
+    ASSERT_THAT(DS_SUCCESS == resultChecker);
     ASSERT_THAT(*value == arr[0]);
 
     VectorDestroy(&newVector, NULL);
@@ -209,22 +209,42 @@ UNIT(Allocate_Heap)
     ASSERT_THAT(NULL == newHeap); 
 END_UNIT
 
-UNIT(Append_To_Heap_Elements_Expect_No_Crash)
+UNIT(Append_To_Heap_Min_Elements_Expect_No_Crash)
     size_t arr[] = {2,1,4,3};
     size_t i = 0;
     Heap* newData = HeapCreate(10, HEAP_TYPE_MIN, CompareSizeTHeap);
-    Heap_Result resultChecker = HEAP_SUCCESS;
+    aps_ds_error resultChecker = DS_SUCCESS;
+    const size_t* data = NULL;
     ASSERT_THAT(NULL != newData);
-/*  TODO:
-    ASSERT_THAT(VectorCapacity(newVector) == 10); 
-*/
+    ASSERT_THAT(0 == HeapSize(newData));
     for (i = 0; i < sizeof(arr)/sizeof(size_t) ; ++i) {
-        resultChecker = HeapInsert(newData, arr + i);
-        ASSERT_THAT(HEAP_SUCCESS == resultChecker);
+        resultChecker = HeapPush(newData, arr + i);
+        ASSERT_THAT(DS_SUCCESS == resultChecker);
     }
-/*  TODO: 
-    ASSERT_THAT(VectorSize(newVector) == sizeof(arr)/sizeof(size_t));
-*/
+    ASSERT_THAT(sizeof(arr)/sizeof(size_t) == HeapSize(newData));
+    data = (const size_t*)HeapGetTopValue(newData);
+    ASSERT_THAT(NULL != data);
+    ASSERT_THAT(1 == *data);
+    HeapDestroy(&newData, NULL);
+    ASSERT_THAT(NULL == newData); 
+END_UNIT
+
+UNIT(Append_To_Heap_Max_Elements_Expect_No_Crash)
+    size_t arr[] = {2,1,4,3};
+    size_t i = 0;
+    Heap* newData = HeapCreate(10, HEAP_TYPE_MAX, CompareSizeTHeap);
+    aps_ds_error resultChecker = DS_SUCCESS;
+    const size_t* data = NULL;
+    ASSERT_THAT(NULL != newData);
+    ASSERT_THAT(0 == HeapSize(newData));
+    for (i = 0; i < sizeof(arr)/sizeof(size_t) ; ++i) {
+        resultChecker = HeapPush(newData, arr + i);
+        ASSERT_THAT(DS_SUCCESS == resultChecker);
+    }
+    ASSERT_THAT(sizeof(arr)/sizeof(size_t) == HeapSize(newData));
+    data = (const size_t*)HeapGetTopValue(newData);
+    ASSERT_THAT(NULL != data);
+    ASSERT_THAT(4 == *data);
     HeapDestroy(&newData, NULL);
     ASSERT_THAT(NULL == newData); 
 END_UNIT
@@ -265,7 +285,8 @@ TEST_SUITE(Test DataStructures)
 
     /* Heap Tests */
     TEST(Allocate_Heap)
-    TEST(Append_To_Heap_Elements_Expect_No_Crash)
+    TEST(Append_To_Heap_Min_Elements_Expect_No_Crash)
+    TEST(Append_To_Heap_Max_Elements_Expect_No_Crash)
     /* Queue Tests */
     TEST(Allocate_Queue)
 

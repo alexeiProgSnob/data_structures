@@ -11,17 +11,12 @@
  *  @update Alexei Radashkovsky (alexeirada@gmail.com)
  *  @bug No known bugs.
  */
-
+#include "data_structure_error.h"
 #include <stddef.h> /*< size_t >*/
+#include <unistd.h> /*< ssize_t >*/
 
 typedef struct Heap Heap;
 
-typedef enum _Heap_Result {
-	HEAP_SUCCESS = 0,
-	HEAP_UNINITIALIZED_ERROR, 		/**< Uninitialized map error 	*/
-    HEAP_GENERAL_ERROR,
-	HEAP_ALLOCATION_ERROR 			/**< Allocation error 	 		*/
-} Heap_Result;
 
 typedef enum _Heap_Type {
     HEAP_TYPE_ENUM_START,
@@ -75,5 +70,27 @@ void HeapDestroy(Heap** _heap, void (*_elementDestroy)(void* _item));
  * @params[in] _data - pointer to the data
  * @return HEAP_SUCCESS, and other on error
  */
-Heap_Result HeapInsert(Heap* _heap, void* _data);
+aps_ds_error HeapPush(Heap* _heap, void* _data);
+
+/**
+ * @brief Get the top value in heap do not remove the value
+ * @param[in] _heap - Heap.
+ * @return the address to the value on success, NULL on failure
+ */
+const void* HeapGetTopValue(const Heap* _heap);
+
+/**
+ * @brief Remove elemnt from the top
+ * @param[in] _heap - Heap.
+ * @param[out]_pValue - pointer where to store the pointer to the value 
+ * @return HEAP_SUCCESS, other error on failure
+ */
+aps_ds_error HeapPop(Heap* _heap, void** _pValue);
+
+/**
+ * @brief Get the number of elements that inserted into heap
+ * @param[in] _heap - Heap.
+ * @return the size, -1 on failure
+ */
+ssize_t HeapSize(const Heap* _heap);
 #endif /* __HEAP_H__ */
