@@ -58,7 +58,7 @@ void HashMapDestroy(HashMap** _map, void (*_keyDestroy)(void* _key), void (*_val
 
 /** 
  * @brief Adjust map capacity and rehash all key/value pairs
- * @param[in] _map - exisiting map
+ * @param[in] _map - existing map
  * @param[in] _newCapacity - new capacity shall be rounded to nearest larger prime number.
  * @return MAP_SUCCESS or MAP_ALLOCATION_ERROR
  */

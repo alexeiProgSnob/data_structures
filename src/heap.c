@@ -9,8 +9,14 @@ struct Heap {
     HeapDataCompareFunc m_compareFunc;
 };
 
-static aps_ds_error _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult);
+typedef struct PlaceAndData {
+    size_t m_childPlace;
+    void* m_data;
+} PlaceAndData;
 
+static PlaceAndData _GetExpectedComparedData(Heap* _heap, size_t _place, Heap_Data_Compare_Result _expectedCompareResult);
+static aps_ds_error _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult);
+static aps_ds_error _ReplaceAfterRemove(Heap* _heap, size_t _place, Heap_Data_Compare_Result _expectedCompareResult);
 /** 
  * @brief Create a new heap with given size.
  * @param[in] _heapSize - Expected max capacity.
@@ -81,20 +87,17 @@ aps_ds_error HeapPush(Heap* _heap, void* _data) {
     }
 
     expectedCopareResult = _heap->m_heapType == HEAP_TYPE_MAX ? HEAP_COMPARE_BIGGER : HEAP_COMPARE_SMALLER;
-    /* TODO: fix error hendeling */
-    if (_FindPlaceToInsert(_heap, _data, VectorSize(_heap->m_vector), expectedCopareResult) != DS_SUCCESS) {
-        return DS_GENERAL_ERROR;
-    }
-    return DS_SUCCESS;
+    return _FindPlaceToInsert(_heap, _data, VectorSize(_heap->m_vector), expectedCopareResult);
 }
 
 /**
- * @brief Remove elemnt from the top
+ * @brief Remove element from the top
  * @param[in] _heap - Heap.
  * @param[out]_pValue - pointer where to store the pointer to the value 
  * @return DS_SUCCESS, other error on failure
  */
 aps_ds_error HeapPop(Heap* _heap, void** _pValue) {
+    Heap_Data_Compare_Result expectedCopareResult;
     aps_ds_error vectorResult = DS_UNINITIALIZED_ERROR;
     void* lastElement = NULL;
     if (NULL == _heap || NULL == _pValue) {
@@ -105,14 +108,21 @@ aps_ds_error HeapPop(Heap* _heap, void** _pValue) {
         return DS_OUT_OF_BOUNDS_ERROR;
     }
 
-    vectorResult = VectorGet(_heap->m_vector, 0, _pValue);
-    DS_ASSERT_EQUAL(vectorResult, DS_SUCCESS);
-
     vectorResult = VectorRemove(_heap->m_vector, &lastElement);
     DS_ASSERT_EQUAL(vectorResult, DS_SUCCESS);
+    if (VectorSize(_heap->m_vector) == 0) {
+        *_pValue = lastElement;
+        return DS_SUCCESS;
+    }
 
-    vectorResult = VectorSet
-    return DS_SUCCESS;
+    vectorResult = VectorSet(_heap->m_vector, 0, lastElement, _pValue);
+    if (vectorResult != DS_SUCCESS) {
+        VectorAppend(_heap->m_vector, lastElement);
+        return vectorResult;
+    }
+
+    expectedCopareResult = _heap->m_heapType == HEAP_TYPE_MAX ? HEAP_COMPARE_BIGGER : HEAP_COMPARE_SMALLER;
+    return _ReplaceAfterRemove(_heap, 0, expectedCopareResult);
 }
 
 /**
@@ -148,6 +158,54 @@ ssize_t HeapSize(const Heap* _heap) {
         return -1;
     }
     return VectorSize(_heap->m_vector);
+}
+
+static PlaceAndData _GetExpectedComparedData(Heap* _heap, size_t _place, Heap_Data_Compare_Result _expectedCompareResult) {
+    PlaceAndData retData = {0, NULL};
+    void* childA = NULL;
+    void* childB = NULL;
+    size_t childPlaceA =  (_place+1) * 2;
+    size_t childPlaceB = (_place+1) * 2 - 1;
+    size_t vectorSize = VectorSize(_heap->m_vector);
+    if (childPlaceB >= vectorSize) {
+        return retData;
+    }
+
+    VectorGet(_heap->m_vector, childPlaceB, &childB);
+    
+    if (childPlaceA >= vectorSize) {
+        retData.m_data = childB; 
+        retData.m_childPlace = childPlaceB;
+        return retData;
+    }
+
+    VectorGet(_heap->m_vector, childPlaceA, &childA);
+    if (_heap->m_compareFunc(childA, childB) == _expectedCompareResult) {
+        retData.m_data = childA;
+        retData.m_childPlace = childPlaceA;
+    } else {
+        retData.m_data = childB; 
+        retData.m_childPlace = childPlaceB;
+    }
+    
+    return retData;
+}
+
+static aps_ds_error _ReplaceAfterRemove(Heap* _heap, size_t _place, Heap_Data_Compare_Result _expectedCompareResult) {
+    void* parent = NULL;
+    PlaceAndData bestChildToCompareWith = _GetExpectedComparedData(_heap, _place, _expectedCompareResult);
+    if (NULL == bestChildToCompareWith.m_data) {
+        return DS_SUCCESS;
+    }
+
+    VectorGet(_heap->m_vector, _place, &parent);
+    if (_heap->m_compareFunc(parent, bestChildToCompareWith.m_data) == _expectedCompareResult) {
+        return DS_SUCCESS;
+    }
+
+    VectorSet(_heap->m_vector, _place, bestChildToCompareWith.m_data, NULL);
+    VectorSet(_heap->m_vector, bestChildToCompareWith.m_childPlace, parent, NULL);
+    return _ReplaceAfterRemove(_heap, bestChildToCompareWith.m_childPlace, _expectedCompareResult);
 }
 
 static aps_ds_error _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult) {

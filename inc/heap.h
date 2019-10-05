@@ -17,7 +17,6 @@
 
 typedef struct Heap Heap;
 
-
 typedef enum _Heap_Type {
     HEAP_TYPE_ENUM_START,
     HEAP_TYPE_MIN,
@@ -80,7 +79,7 @@ aps_ds_error HeapPush(Heap* _heap, void* _data);
 const void* HeapGetTopValue(const Heap* _heap);
 
 /**
- * @brief Remove elemnt from the top
+ * @brief Remove element from the top
  * @param[in] _heap - Heap.
  * @param[out]_pValue - pointer where to store the pointer to the value 
  * @return HEAP_SUCCESS, other error on failure

@@ -249,6 +249,56 @@ UNIT(Append_To_Heap_Max_Elements_Expect_No_Crash)
     ASSERT_THAT(NULL == newData); 
 END_UNIT
 
+UNIT(Append_To_Heap_Min_Elements_And_Pop)
+    size_t arr[] = {2,1,4,3};
+    size_t arrRes[] = {1,2,3,4};
+    size_t i = 0;
+    Heap* newData = HeapCreate(10, HEAP_TYPE_MIN, CompareSizeTHeap);
+    aps_ds_error resultChecker = DS_SUCCESS;
+    size_t* data = NULL;
+    ASSERT_THAT(NULL != newData);
+    ASSERT_THAT(0 == HeapSize(newData));
+    for (i = 0; i < sizeof(arr)/sizeof(size_t) ; ++i) {
+        resultChecker = HeapPush(newData, arr + i);
+        ASSERT_THAT(DS_SUCCESS == resultChecker);
+    }
+    ASSERT_THAT(sizeof(arr)/sizeof(size_t) == HeapSize(newData));
+    for (i = 0; i < sizeof(arr)/sizeof(size_t) ; ++i) {
+        resultChecker = HeapPop(newData, (void**)&data);
+        ASSERT_THAT(DS_SUCCESS == resultChecker);
+        ASSERT_THAT(NULL != data);
+        ASSERT_THAT(arrRes[i] == *data);
+        data = NULL;
+    }
+    HeapDestroy(&newData, NULL);
+    ASSERT_THAT(NULL == newData); 
+END_UNIT
+
+UNIT(Append_To_Heap_Max_Elements_And_Pop)
+    size_t arr[] = {2,1,4,3};
+    size_t arrRes[] = {4,3,2,1};
+    size_t i = 0;
+    Heap* newData = HeapCreate(10, HEAP_TYPE_MAX, CompareSizeTHeap);
+    aps_ds_error resultChecker = DS_SUCCESS;
+    size_t* data = NULL;
+    ASSERT_THAT(NULL != newData);
+    ASSERT_THAT(0 == HeapSize(newData));
+    for (i = 0; i < sizeof(arr)/sizeof(size_t) ; ++i) {
+        resultChecker = HeapPush(newData, arr + i);
+        ASSERT_THAT(DS_SUCCESS == resultChecker);
+    }
+    ASSERT_THAT(sizeof(arr)/sizeof(size_t) == HeapSize(newData));
+    for (i = 0; i < sizeof(arr)/sizeof(size_t) ; ++i) {
+        resultChecker = HeapPop(newData, (void**)&data);
+        ASSERT_THAT(DS_SUCCESS == resultChecker);
+        ASSERT_THAT(NULL != data);
+        ASSERT_THAT(arrRes[i] == *data);
+        data = NULL;
+    }
+    HeapDestroy(&newData, NULL);
+    ASSERT_THAT(NULL == newData); 
+END_UNIT
+
 UNIT(Allocate_Queue)
     CQueue* newDataS = CQueueCreate(10);
     ASSERT_THAT(NULL != newDataS);
@@ -287,6 +337,9 @@ TEST_SUITE(Test DataStructures)
     TEST(Allocate_Heap)
     TEST(Append_To_Heap_Min_Elements_Expect_No_Crash)
     TEST(Append_To_Heap_Max_Elements_Expect_No_Crash)
+    TEST(Append_To_Heap_Min_Elements_And_Pop)
+    TEST(Append_To_Heap_Max_Elements_And_Pop)
+    
     /* Queue Tests */
     TEST(Allocate_Queue)
 
