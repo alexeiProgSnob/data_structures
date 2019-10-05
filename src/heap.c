@@ -221,10 +221,7 @@ static aps_ds_error _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPla
     }
     
     parentPlace = (_lastPlace % 2) == 0 ? _lastPlace/2 - 1: _lastPlace/2;
-    vectorResult = VectorGet(_heap->m_vector, parentPlace, &comapreData);
-    if (vectorResult != DS_SUCCESS) {
-        return vectorResult;
-    }
+    VectorGet(_heap->m_vector, parentPlace, &comapreData);
 
     if (_expectedCompareResult == _heap->m_compareFunc(_data, comapreData)) {
         if (_lastPlace == vectorSize) {

@@ -2,16 +2,14 @@
 #define __LISTINTERNAL_H__
 
 
-typedef struct Node
-{
+typedef struct Node {
     void* m_item;       /* pointer to items */
     struct Node* m_next;/* Pointer to the next node */
     struct Node* m_prev;/* Pointer to the previous node */
     
-}Node;
+} Node;
 
-struct List
-{
+struct List {
     struct Node m_head;/* The Head of the list */
     struct Node m_tail;/* The Tail of the list */
 };
