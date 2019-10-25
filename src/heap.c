@@ -210,7 +210,6 @@ static aps_ds_error _ReplaceAfterRemove(Heap* _heap, size_t _place, Heap_Data_Co
 
 static aps_ds_error _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult) {
     void* comapreData = NULL;
-    aps_ds_error vectorResult = DS_OUT_OF_BOUNDS_ERROR;
     size_t parentPlace = 0;
     size_t vectorSize = VectorSize(_heap->m_vector);
     if (0 == _lastPlace) {
