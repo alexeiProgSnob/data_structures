@@ -23,6 +23,15 @@ Stack* StackCreate() {
     return newStack;
 }
 
+void StackDestroy(Stack** _pStack, void (*_elementDestroy)(void* _item)) {
+    if (NULL == _pStack) {
+        return;
+    }
+
+    ListDestroy(&((*_pStack)->mList), _elementDestroy);
+    free(*_pStack);
+    *_pStack = NULL;
+}
 
 aps_ds_error StackPop(Stack* _stack, void** _pValue) {
     if (NULL == _stack || NULL == _pValue) {

@@ -6,6 +6,7 @@
 #include "list.h"
 #include "circular_queue.h"
 #include "circular_safe_queue.h"
+#include "stack.h"
 #include <stdio.h>
 
 Compare_Result CompareSizeTPointers(void* _generalTypeA, void* _generalTypeB) {
@@ -321,6 +322,13 @@ UNIT(Allocate_List)
     ASSERT_THAT(NULL == newDataS); 
 END_UNIT
 
+UNIT(Allocate_Stack)
+    Stack* newDataS = StackCreate();
+    ASSERT_THAT(NULL != newDataS);
+    StackDestroy(&newDataS, NULL);
+    ASSERT_THAT(NULL == newDataS); 
+END_UNIT
+
 
 TEST_SUITE(Test DataStructures)
     /* bubble Sort Tests */
@@ -348,4 +356,7 @@ TEST_SUITE(Test DataStructures)
 
     /* List Tests */
     TEST(Allocate_List)
+
+    /* Stck Tests */
+    TEST(Allocate_Stack)
 END_SUITE

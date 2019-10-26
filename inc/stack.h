@@ -13,7 +13,6 @@
  */
 
 #include "data_structure_error.h"
-#include <stddef.h> /*< size_t >*/
 #include <unistd.h> /*< ssize_t >*/
 
 typedef struct Stack Stack;
@@ -23,6 +22,15 @@ typedef struct Stack Stack;
  * @return newly created stack or null on failure
  */
 Stack* StackCreate(void);
+
+/**
+ * @brief Dynamically deallocate a previously allocated stack
+ * @param[in] _stack - Stack to be deallocated.
+ * @params[in] _elementDestroy : A function pointer to be used to destroy all elements in the vector
+ *             or a null if no such destroy is required
+ * @return void
+ */
+void StackDestroy(Stack** _pStack, void (*_elementDestroy)(void* _item));
 
 /**
  * @brief Remove element from the top
