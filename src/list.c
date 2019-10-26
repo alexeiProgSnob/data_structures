@@ -13,7 +13,7 @@
  *  @bug No known bugs.
  */
 
-static List_Result PushToList(List *_list, void *_item, Node *_leftNode);
+static aps_ds_error PushToList(List *_list, void *_item, Node *_leftNode);
 static List *InisalizeData(List *_list);
 
 List *ListCreate() {
@@ -51,18 +51,18 @@ void ListDestroy(List **_plist, void (*_elementDestroy)(void *_item)) {
     *_plist = NULL;
 }
 
-List_Result ListPushHead(List *_list, void *_item) {
+aps_ds_error ListPushHead(List *_list, void *_item) {
     return PushToList(_list, _item, &_list->m_head);
 }
 
-List_Result ListPopHead(List *_list, void **_pItem) {
+aps_ds_error ListPopHead(List *_list, void **_pItem) {
     Node *tempRemove;
     if (_list == NULL || _pItem == NULL) {
-        return LIST_UNINITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     if (_list->m_head.m_next == _list->m_tail.m_next) {
-        return LIST_UNDERFLOW;
+        return DS_UNDERFLOW_ERROR;
     }
 
     tempRemove = (_list->m_head).m_next;
@@ -71,21 +71,21 @@ List_Result ListPopHead(List *_list, void **_pItem) {
     PopNode(&(_list->m_head), tempRemove->m_next);
 
     free(tempRemove);
-    return LIST_SUCCESS;
+    return DS_SUCCESS;
 }
 
-List_Result ListPushTail(List *_list, void *_item) {
+aps_ds_error ListPushTail(List *_list, void *_item) {
     return PushToList(_list, _item, _list->m_tail.m_prev);
 }
 
-List_Result ListPopTail(List *_list, void **_pItem) {
+aps_ds_error ListPopTail(List *_list, void **_pItem) {
     Node *tempRemove;
     if (_list == NULL || _pItem == NULL) {
-        return LIST_UNINITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     if (_list->m_head.m_next == _list->m_tail.m_next) {
-        return LIST_UNDERFLOW;
+        return DS_UNDERFLOW_ERROR;
     }
 
     tempRemove = (_list->m_tail).m_prev;
@@ -94,7 +94,7 @@ List_Result ListPopTail(List *_list, void **_pItem) {
     PopNode(tempRemove->m_prev, &(_list->m_tail));
 
     free(tempRemove);
-    return LIST_SUCCESS;
+    return DS_SUCCESS;
 }
 
 size_t ListSize(const List *_list) {
@@ -110,26 +110,26 @@ size_t ListSize(const List *_list) {
     return count;
 }
 
-static List_Result PushToList(List *_list, void *_item, Node *_leftNode) {
+static aps_ds_error PushToList(List *_list, void *_item, Node *_leftNode) {
     Node *newNode;
 
     if (_list == NULL) {
-        return LIST_UNINITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     if (_item == NULL) {
-        return LIST_NULL_ELEMENT_ERROR;
+        return DS_UNINITIALIZED_ITEM_ERROR;
     }
 
     newNode = NodeCreate(_item);
     if (newNode == NULL) {
-        return LIST_ALLOCATION_ERROR;
+        return DS_ALLOCATION_ERROR;
     }
 
     newNode->m_item = _item;
     PushNode(_leftNode, newNode);
 
-    return LIST_SUCCESS;
+    return DS_SUCCESS;
 }
 
 Node *NodeCreate(void *_item) {

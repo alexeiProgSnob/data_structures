@@ -15,16 +15,11 @@
 
 #include "list_itr.h"
 #include "list_operations.h"
+#include "data_structure_error.h"
 #include <stddef.h>  /*< size_t >*/
 
 
-typedef enum List_Result {
-	LIST_SUCCESS,
-	LIST_UNINITIALIZED_ERROR,			/**< Uninitialized list 					 	*/
-	LIST_ALLOCATION_ERROR,				/**< Node allocation failed due to heap error   */
-	LIST_NULL_ELEMENT_ERROR,
-	LIST_UNDERFLOW
-} List_Result;
+
 
 /** 
  * @brief Create a list
@@ -53,12 +48,12 @@ void ListDestroy(List** _pList, void (*_elementDestroy)(void* _item));
  * @params _list A previously created List ADT returned via ListCreate
  * @params _item An item to add to the list
  * @returns error code
- * @retval LIST_SUCCESS on success
- * @retval LIST_UNINITIALIZED_ERROR if the list is not initialized
- * @retval LIST_NULL_ELEMENT_ERROR  if _item is NULL
- * @retval LIST_ALLOCATION_ERROR on memory allocation failure
+ * @retval DS_SUCCESS on success
+ * @retval DS_UNINITIALIZED_ERROR if the list is not initialized
+ * @retval DS_UNINITIALIZED_ITEM_ERROR  if _item is NULL
+ * @retval DS_ALLOCATION_ERROR on memory allocation failure
  */
-List_Result ListPushHead(List* _list, void* _item);
+aps_ds_error ListPushHead(List* _list, void* _item);
 
 /** 
  * @brief Add element to the list's tail
@@ -67,12 +62,12 @@ List_Result ListPushHead(List* _list, void* _item);
  * @params _list  A previously created List ADT returned via ListCreate
  * @params _item An item to add to the list
  * @returns error code
- * @retval LIST_SUCCESS on success
- * @retval LIST_UNINITIALIZED_ERROR if the list is not initialized
- * @retval LIST_NULL_ELEMENT_ERROR  if _item is NULL
- * @retval LIST_ALLOCATION_ERROR on memory allocation failure 
+ * @retval DS_SUCCESS on success
+ * @retval DS_UNINITIALIZED_ERROR if the list is not initialized
+ * @retval DS_UNINITIALIZED_ITEM_ERROR  if _item is NULL
+ * @retval DS_ALLOCATION_ERROR on memory allocation failure 
  */
-List_Result ListPushTail(List* _list, void* _item);
+aps_ds_error ListPushTail(List* _list, void* _item);
 
 /** @brief Remove element from list's head
  *  @details if successfull, stores a pointer to the removed item in _item
@@ -81,11 +76,11 @@ List_Result ListPushTail(List* _list, void* _item);
  * @params _list : A previously created List ADT returned via ListCreate
  * @params _pItem: To store a pointer to the removed item in Head
  * @returns item that was removed
- * @retval LIST_SUCCESS on success
- * @retval LIST_UNDERFLOW if the list is empty
- * @retval LIST_UNINITIALIZED_ERROR if the list or _pItem is not initialized
+ * @retval DS_SUCCESS on success
+ * @retval DS_UNDERFLOW_ERROR if the list is empty
+ * @retval DS_UNINITIALIZED_ERROR if the list or _pItem is not initialized
  */
-List_Result ListPopHead(List* _list, void** _pItem);
+aps_ds_error ListPopHead(List* _list, void** _pItem);
 
 /** @brief Remove element from list's tail
  *  @details time complexity O(1).
@@ -93,11 +88,11 @@ List_Result ListPopHead(List* _list, void** _pItem);
  * @params _list : A previously created List ADT returned via ListCreate
  * @params _pItem: To store a pointer to the removed item in Tail
  * @returns item that was removed
- * @retval LIST_SUCCESS on success
- * @retval LIST_UNDERFLOW if the list is empty
- * @retval LIST_UNINITIALIZED_ERROR if the list or _pItem is not initialized 
+ * @retval DS_SUCCESS on success
+ * @retval DS_UNDERFLOW_ERROR if the list is empty
+ * @retval DS_UNINITIALIZED_ERROR if the list or _pItem is not initialized 
  */
-List_Result ListPopTail(List* _list, void** _pItem);
+aps_ds_error ListPopTail(List* _list, void** _pItem);
 
 /** @brief Get number of elements in the list
  * Average time complexity O(n).

@@ -22,6 +22,7 @@ OBJECTS 	+= $(OBJ)hash.o
 OBJECTS		+= $(OBJ)circular_queue.o
 OBJECTS		+= $(OBJ)circular_safe_queue.o
 OBJECTS		+= $(OBJ)heap.o
+OBJECTS		+= $(OBJ)stack.o
 OBJECTS		+= $(OBJ)vector.o
 OBJECTS		+= $(OBJ)list.o
 OBJECTS 	+= $(OBJ)list_itr.o
