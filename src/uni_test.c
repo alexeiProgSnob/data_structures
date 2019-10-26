@@ -61,14 +61,14 @@ Compare_Result CompareSizeT(void* _generalTypeA, void* _generalTypeB) {
 }
 
 
-Heap_Data_Compare_Result CompareSizeTHeap(const void* _generalTypeA, const void* _generalTypeB) {
+Compare_Result CompareSizeTHeap(const void* _generalTypeA, const void* _generalTypeB) {
     const size_t* typeA = (const size_t*) _generalTypeA;
     const size_t* typeB = (const size_t*) _generalTypeB;
     if (*typeA > *typeB) {
-        return HEAP_COMPARE_BIGGER;
+        return BIGGER;
     }
 
-    return HEAP_COMPARE_SMALLER;
+    return SMALLER;
 }
 
 void SwapToSizeT(void* _generalTypeA, void* _generalTypeB) {
@@ -80,14 +80,14 @@ void SwapToSizeT(void* _generalTypeA, void* _generalTypeB) {
 }
 
 
-Heap_Data_Compare_Result Int_Heap(const void* _a, const void* _b) {
+Compare_Result Int_Heap(const void* _a, const void* _b) {
     const int* a = (const int*)_a;
     const int* b = (const int*)_b;
     if (a > b) {
-        return HEAP_COMPARE_BIGGER;
+        return BIGGER;
     }
 
-    return HEAP_COMPARE_SMALLER;
+    return SMALLER;
 }
 
 UNIT(basic_valid_size_t_pointer_bubble_sort_test)

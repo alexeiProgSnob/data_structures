@@ -24,26 +24,18 @@ typedef enum _Heap_Type {
     HEAP_TYPE_ENUM_END
 } Heap_Type;
 
-typedef enum _Heap_Data_Compare_Result {
-    HEAP_COMPARE_ENUM_START,
-    HEAP_COMPARE_SMALLER,
-    HEAP_COMPARE_BIGGER,
-    HEAP_COMPARE_EQUAL,
-    HEAP_COMPARE_ENUM_END
-} Heap_Data_Compare_Result;
-
 /* For example
-Heap_Data_Compare_Result Int_Heap(const void* _a, const void* _b) {
+Compare_Result Int_Heap(const void* _a, const void* _b) {
     const int* a = (const int*)_a;
     const int* b = (const int*)_b;
     if (a > b) {
-        return HEAP_COMPARE_BIGGER;
+        return BIGGER;
     }
 
-    return HEAP_COMPARE_SMALLER;
+    return SMALLER;
 }
 */
-typedef Heap_Data_Compare_Result (*HeapDataCompareFunc)(const void*, const void*);
+typedef Compare_Result (*HeapDataCompareFunc)(const void*, const void*);
 
 /** 
  * @brief Create a new heap with given size.

@@ -14,9 +14,9 @@ typedef struct PlaceAndData {
     void* m_data;
 } PlaceAndData;
 
-static PlaceAndData _GetExpectedComparedData(Heap* _heap, size_t _place, Heap_Data_Compare_Result _expectedCompareResult);
-static aps_ds_error _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult);
-static aps_ds_error _ReplaceAfterRemove(Heap* _heap, size_t _place, Heap_Data_Compare_Result _expectedCompareResult);
+static PlaceAndData _GetExpectedComparedData(Heap* _heap, size_t _place, Compare_Result _expectedCompareResult);
+static aps_ds_error _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Compare_Result _expectedCompareResult);
+static aps_ds_error _ReplaceAfterRemove(Heap* _heap, size_t _place, Compare_Result _expectedCompareResult);
 /** 
  * @brief Create a new heap with given size.
  * @param[in] _heapSize - Expected max capacity.
@@ -77,7 +77,7 @@ void HeapDestroy(Heap** _heap, void (*_elementDestroy)(void* _item)) {
  * @return DS_SUCCESS, and other on error
  */
 aps_ds_error HeapPush(Heap* _heap, void* _data) {
-    Heap_Data_Compare_Result expectedCopareResult;
+    Compare_Result expectedCopareResult;
     if (NULL == _heap) {
         return DS_UNINITIALIZED_ERROR;
     }
@@ -86,7 +86,7 @@ aps_ds_error HeapPush(Heap* _heap, void* _data) {
         return DS_UNINITIALIZED_ITEM_ERROR;
     }
 
-    expectedCopareResult = _heap->m_heapType == HEAP_TYPE_MAX ? HEAP_COMPARE_BIGGER : HEAP_COMPARE_SMALLER;
+    expectedCopareResult = _heap->m_heapType == HEAP_TYPE_MAX ? BIGGER : SMALLER;
     return _FindPlaceToInsert(_heap, _data, VectorSize(_heap->m_vector), expectedCopareResult);
 }
 
@@ -97,7 +97,7 @@ aps_ds_error HeapPush(Heap* _heap, void* _data) {
  * @return DS_SUCCESS, other error on failure
  */
 aps_ds_error HeapPop(Heap* _heap, void** _pValue) {
-    Heap_Data_Compare_Result expectedCopareResult;
+    Compare_Result expectedCopareResult;
     aps_ds_error vectorResult = DS_UNINITIALIZED_ERROR;
     void* lastElement = NULL;
     if (NULL == _heap || NULL == _pValue) {
@@ -121,7 +121,7 @@ aps_ds_error HeapPop(Heap* _heap, void** _pValue) {
         return vectorResult;
     }
 
-    expectedCopareResult = _heap->m_heapType == HEAP_TYPE_MAX ? HEAP_COMPARE_BIGGER : HEAP_COMPARE_SMALLER;
+    expectedCopareResult = _heap->m_heapType == HEAP_TYPE_MAX ? BIGGER : SMALLER;
     return _ReplaceAfterRemove(_heap, 0, expectedCopareResult);
 }
 
@@ -160,7 +160,7 @@ ssize_t HeapSize(const Heap* _heap) {
     return VectorSize(_heap->m_vector);
 }
 
-static PlaceAndData _GetExpectedComparedData(Heap* _heap, size_t _place, Heap_Data_Compare_Result _expectedCompareResult) {
+static PlaceAndData _GetExpectedComparedData(Heap* _heap, size_t _place, Compare_Result _expectedCompareResult) {
     PlaceAndData retData = {0, NULL};
     void* childA = NULL;
     void* childB = NULL;
@@ -191,7 +191,7 @@ static PlaceAndData _GetExpectedComparedData(Heap* _heap, size_t _place, Heap_Da
     return retData;
 }
 
-static aps_ds_error _ReplaceAfterRemove(Heap* _heap, size_t _place, Heap_Data_Compare_Result _expectedCompareResult) {
+static aps_ds_error _ReplaceAfterRemove(Heap* _heap, size_t _place, Compare_Result _expectedCompareResult) {
     void* parent = NULL;
     PlaceAndData bestChildToCompareWith = _GetExpectedComparedData(_heap, _place, _expectedCompareResult);
     if (NULL == bestChildToCompareWith.m_data) {
@@ -208,7 +208,7 @@ static aps_ds_error _ReplaceAfterRemove(Heap* _heap, size_t _place, Heap_Data_Co
     return _ReplaceAfterRemove(_heap, bestChildToCompareWith.m_childPlace, _expectedCompareResult);
 }
 
-static aps_ds_error _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Heap_Data_Compare_Result _expectedCompareResult) {
+static aps_ds_error _FindPlaceToInsert(Heap* _heap, void* _data, size_t _lastPlace, Compare_Result _expectedCompareResult) {
     void* comapreData = NULL;
     size_t parentPlace = 0;
     size_t vectorSize = VectorSize(_heap->m_vector);

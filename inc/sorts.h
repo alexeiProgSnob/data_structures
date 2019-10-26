@@ -11,7 +11,7 @@
  *  @Update by Alexei Radashkovsky on 08/20/19
  *  @bug no bugs known.
  */
-
+#include "data_structure_error.h"
 #include <stddef.h> /*< size_t >*/
 
 typedef enum Sort_Result {
@@ -22,11 +22,7 @@ typedef enum Sort_Result {
 } Sort_Result;
 
 
-typedef enum Compare_Result {
-    BIGGER  = 0xFFF,
-    SMALLER = 0xEFD,
-    EQUAL = 0xDEF
-} Compare_Result;
+
 
 typedef Compare_Result (*CompareFunc) (void*, void*);
 typedef void (*SwapFunc) (void*, void*);

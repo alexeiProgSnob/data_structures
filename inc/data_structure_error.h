@@ -13,4 +13,10 @@ typedef enum _aps_ds_error {
     DS_GENERAL_ERROR
 } aps_ds_error;
 
+typedef enum Compare_Result {
+    BIGGER  = 0xFFF,
+    SMALLER = 0xEFD,
+    EQUAL = 0xDEF
+} Compare_Result;
+
 #endif /* __DATA_STRUCTURE_ERROR_H_ */
