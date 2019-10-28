@@ -19,4 +19,8 @@ typedef enum Compare_Result {
     EQUAL = 0xDEF
 } Compare_Result;
 
+
+typedef Compare_Result (*CompareFunc)(const void*, const void*);
+
+
 #endif /* __DATA_STRUCTURE_ERROR_H_ */

@@ -7,7 +7,7 @@ typedef void* ListItr;
 /** 
  * @brief Get iterator to the list's beginning
  *
- * @params _list : list to return begin iterator, pointing at first element
+ * @param _list : list to return begin iterator, pointing at first element
  *                 or at the end if list is empty
  * @return iterator pointing at the list's beginning
  */
@@ -16,7 +16,7 @@ ListItr ListItr_Begin(const List* _list);
 /** 
  * @brief Get iterator to the list end
  *
- * @params _list : list to return end iterator
+ * @param _list : list to return end iterator
  * @return an iterator pointing at the list's end
  */
 ListItr ListItr_End(const List* _list);
@@ -42,7 +42,7 @@ ListItr ListItr_Prev(ListItr _itr);
 /** 
  * @brief Get data from the list node the iterator is pointing to
  *
- * @params _itr : A list iterator
+ * @param _itr : A list iterator
  * @return the data the iterator is pointing at or NULL if pointing to the end
  */
 void* ListItr_Get(ListItr _itr);
@@ -62,7 +62,7 @@ ListItr ListItr_InsertBefore(ListItr _itr, void* _element);
 /** 
  * @brief Removes the node the iterator is pointing at
  *
- * @params _itr : A list iterator
+ * @param _itr : A list iterator
  * @return the removed data
  */
 void* ListItr_Remove(ListItr _itr);

@@ -56,7 +56,7 @@ Heap* HeapCreate(size_t _heapSize, Heap_Type _heapType, HeapDataCompareFunc _com
 /**
  * @brief Dynamically deallocate a previously allocated heap
  * @param[in] _heap - Heap to be deallocated.
- * @params[in] _elementDestroy : A function pointer to be used to destroy all elements in the vector
+ * @param[in] _elementDestroy : A function pointer to be used to destroy all elements in the vector
  *             or a null if no such destroy is required
  * @return void
  */
@@ -73,7 +73,7 @@ void HeapDestroy(Heap** _heap, void (*_elementDestroy)(void* _item)) {
 /**
  * @brief insert new data into heap
  * @param[in] _heap - Heap.
- * @params[in] _data - pointer to the data
+ * @param[in] _data - pointer to the data
  * @return DS_SUCCESS, and other on error
  */
 aps_ds_error HeapPush(Heap* _heap, void* _data) {

@@ -27,10 +27,15 @@ Compare_Result Int_Heap(const void* _a, const void* _b) {
     return SMALLER;
 }
 */
-typedef Compare_Result (*TreeCompareFunc)(const void*, const void*);
 
-BTree* BTreeCreate(TreeCompareFunc _compareFunc);
+/** 
+ * @brief Create a new heap with given size.
+ * @param[in] _comapreFunc - compare function for heap data
+ * @return newly created heap or null on failure
+ */
+BTree* BTreeCreate(CompareFunc _compareFunc);
 
 void BTreeDestroy(BTree** _pTree, void (*_elementDestroy)(void* _item));
 
+aps_ds_error BTreeInsert(BTree* _tree, void* _data);
 #endif /* __BINARY_TREE_H__ */

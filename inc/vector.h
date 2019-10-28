@@ -30,7 +30,7 @@ Vector* VectorCreate(size_t _initialCapacity, size_t _blockSize);
 /**
  * @brief Dynamically deallocate a previously allocated vector
  * @param[in] _vector - Vector to be deallocated.
- * @params[in] _elementDestroy : A function pointer to be used to destroy all elements in the vector
+ * @param[in] _elementDestroy : A function pointer to be used to destroy all elements in the vector
  *             or a null if no such destroy is required
  * @return void
  */

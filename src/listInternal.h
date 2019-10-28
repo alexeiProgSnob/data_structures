@@ -16,21 +16,21 @@ struct List {
 
 /** 
  * @brief  push the new NOde beofre +leftNode to the list
- * @params _leftNode : left node that in the list
- * @params _newNode  : new node to push to the list
+ * @param _leftNode : left node that in the list
+ * @param _newNode  : new node to push to the list
  */
 void PushNode(Node* _leftNode,Node* _newNode);
 
 /** 
  * @brief  pop the Node  between the left and right nodes
- * @params _leftNode : left node that in the list
- * @params _rightNode  : right node that in the lsit
+ * @param _leftNode : left node that in the list
+ * @param _rightNode  : right node that in the lsit
  */
 void PopNode(Node* _leftNode,Node* _rightNode);
 
 /** 
  * @brief  create new node for the list
- * @params _item : item to insert in the new node
+ * @param _item : item to insert in the new node
  * @returns  : pointer to the new node
  * @ errors  : NULL if alloction for the node failed
  */

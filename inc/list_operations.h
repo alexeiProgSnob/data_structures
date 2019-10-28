@@ -85,9 +85,9 @@ ListItr ListItr_ForEach(ListItr _begin, ListItr _end, ListActionFunction _action
  * @brief Sorts a sublist in place using the bubble sort algorithm
  * Complexity O(?)
  *
- * @params _begin : Iterator to sublist start
- * @params _end : Iterator to sublist end
- * @params _less : less compare function
+ * @param _begin : Iterator to sublist start
+ * @param _end : Iterator to sublist end
+ * @param _less : less compare function
  * 
  */
 void ListItr_Sort(ListItr _begin, ListItr _end, LessFunction _less);
@@ -131,7 +131,7 @@ List* ListItr_Cut(ListItr _begin, ListItr _end);
 
 /** 
  * @brief Removes all duplicate elements from a sorted sublist [_begin.._end) 
- * and rertun a new list with all removed items.
+ * and return a new list with all removed items.
  * O(?)
  * post condition: [_begin.._end) contains only unique elements
  */

@@ -26,7 +26,7 @@ Stack* StackCreate(void);
 /**
  * @brief Dynamically deallocate a previously allocated stack
  * @param[in] _stack - Stack to be deallocated.
- * @params[in] _elementDestroy : A function pointer to be used to destroy all elements in the vector
+ * @param[in] _elementDestroy : A function pointer to be used to destroy all elements in the vector
  *             or a null if no such destroy is required
  * @return void
  */
@@ -43,7 +43,7 @@ aps_ds_error StackPop(Stack* _stack, void** _pValue);
 /**
  * @brief insert new data into heap
  * @param[in] _stack - Stack.
- * @params[in] _data - pointer to the data
+ * @param[in] _data - pointer to the data
  * @return DS_SUCCESS, and other on error
  */
 aps_ds_error StackPush(Stack* _stack, void* _data);
