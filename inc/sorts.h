@@ -21,10 +21,6 @@ typedef enum Sort_Result {
 
 } Sort_Result;
 
-
-
-
-typedef Compare_Result (*CompareFunc) (void*, void*);
 typedef void (*SwapFunc) (void*, void*);
 /* For example
 Compare_Result CompareSizeT(void* _generalTypeA, void* _generalTypeB) {
