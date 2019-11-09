@@ -13,6 +13,7 @@
  */
 
 #include "data_structure_error.h"
+#include <unistd.h> /*< ssize_t >*/
 
 typedef struct BTree BTree;
 
@@ -38,4 +39,6 @@ BTree* BTreeCreate(CompareFunc _compareFunc);
 void BTreeDestroy(BTree** _pTree, void (*_elementDestroy)(void* _item));
 
 aps_ds_error BTreeInsert(BTree* _tree, void* _data);
+
+ssize_t BTreeGetNumberOfItems(BTree* _tree);
 #endif /* __BINARY_TREE_H__ */

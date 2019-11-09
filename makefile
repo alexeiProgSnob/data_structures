@@ -27,6 +27,7 @@ OBJECTS		+= $(OBJ)vector.o
 OBJECTS		+= $(OBJ)list.o
 OBJECTS 	+= $(OBJ)list_itr.o
 OBJECTS		+= $(OBJ)list_operations.o
+OBJECTS		+= $(OBJ)binary_tree.o
 OBJECTS		+= $(OBJ)sorts.o
 
 UTEST_NAME := utest

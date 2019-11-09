@@ -7,9 +7,10 @@
 #include "circular_queue.h"
 #include "circular_safe_queue.h"
 #include "stack.h"
+#include "binary_tree.h"
 #include <stdio.h>
 
-Compare_Result CompareSizeTPointers(void* _generalTypeA, void* _generalTypeB) {
+Compare_Result CompareSizeTPointers(const void* _generalTypeA, const void* _generalTypeB) {
     size_t** typeA = (size_t**) _generalTypeA;
     size_t** typeB = (size_t**) _generalTypeB;
     if (**typeA > **typeB) {
@@ -50,7 +51,7 @@ int CompareTwoArrays(size_t* arrA, size_t* arrB, size_t sizeOfArrays) {
     return 0;
 }
 
-Compare_Result CompareSizeT(void* _generalTypeA, void* _generalTypeB) {
+Compare_Result CompareSizeT(const void* _generalTypeA, const void* _generalTypeB) {
     size_t* typeA = (size_t*) _generalTypeA;
     size_t* typeB = (size_t*) _generalTypeB;
     if (*typeA > *typeB) {
@@ -329,6 +330,13 @@ UNIT(Allocate_Stack)
     ASSERT_THAT(NULL == newDataS); 
 END_UNIT
 
+UNIT(Allocate_BTree)
+    BTree* newDataS = BTreeCreate(CompareSizeTPointers);
+    ASSERT_THAT(NULL != newDataS);
+    BTreeDestroy(&newDataS, NULL);
+    ASSERT_THAT(NULL == newDataS); 
+END_UNIT
+
 
 TEST_SUITE(Test DataStructures)
     /* bubble Sort Tests */
@@ -357,6 +365,10 @@ TEST_SUITE(Test DataStructures)
     /* List Tests */
     TEST(Allocate_List)
 
-    /* Stck Tests */
+    /* Stack Tests */
     TEST(Allocate_Stack)
+
+    /* Binary Tree Tests */
+    TEST(Allocate_BTree)
+
 END_SUITE
