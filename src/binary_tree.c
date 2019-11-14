@@ -14,8 +14,6 @@ typedef struct _Sentinel {
     TreeNode* mRoot;
 } Sentinel;
 
-
-
 struct BTree {
     Sentinel mSentinel;
     size_t mTreeHight;
@@ -23,18 +21,15 @@ struct BTree {
     CompareFunc mCompareFunc;
 };
 
-
-static TreeNode* _CreateAndInitNewNode(void* _data);
-static void _RecursiveInsert(BTree* _tree, TreeNode* _root, TreeNode* _newNode);
-
 typedef void (*NodeTravelTask)(TreeNode* _node);
-
 typedef struct _TravelTasks {
     void* mContext;
     BTreeElementAction mTaskOnItem;
     NodeTravelTask mTaskOnNode;
 } TravelTasks;
 
+static TreeNode* _CreateAndInitNewNode(void* _data);
+static void _RecursiveInsert(BTree* _tree, TreeNode* _root, TreeNode* _newNode);
 static void _OperateOnNodeAndData(TreeNode* _node, TravelTasks* _tasks);
 
 /*< (Left, Root, Right) >*/
@@ -116,6 +111,30 @@ aps_ds_error BTreeInsert(BTree* _tree, void* _data) {
         _RecursiveInsert(_tree, _tree->mSentinel.mRoot, newNodeToInsert);
     }
     ++_tree->mNumOfItems;
+    return DS_SUCCESS;
+}
+
+aps_ds_error BTreeRemoveData(BTree* _tree, void** _pData) {
+    if (NULL == _tree) {
+        return DS_UNINITIALIZED_ERROR;
+    }
+
+    if (NULL == _tree->mSentinel.mRoot) {
+        return DS_UNINITIALIZED_ITEM_ERROR;
+    }
+
+    return DS_SUCCESS;
+}
+
+aps_ds_error BTreeGetItem(BTree* _tree, void** _pData) {
+    if (NULL == _tree || NULL == _pData) {
+        return DS_UNINITIALIZED_ERROR;
+    }
+
+    if (NULL == _tree->mSentinel.mRoot) {
+        return DS_UNINITIALIZED_ITEM_ERROR;
+    }
+    
     return DS_SUCCESS;
 }
 

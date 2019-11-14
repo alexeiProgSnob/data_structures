@@ -47,6 +47,10 @@ void BTreeDestroy(BTree** _pTree, ElementDestroy _elementDestroy);
 
 aps_ds_error BTreeInsert(BTree* _tree, void* _data);
 
+aps_ds_error BTreeRemoveData(BTree* _tree, void** _pData);
+
+aps_ds_error BTreeGetItem(BTree* _tree, void** _pData);
+
 ssize_t BTreeGetNumberOfItems(BTree* _tree);
 
 aps_ds_error BTreeForEach(BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context);
