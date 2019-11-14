@@ -19,15 +19,6 @@
 
 typedef struct CSQueue CSQueue;
 
-typedef enum CSQueue_Result
-{
-    SQUEUE_SUCCESS = 0xDF98,
-    SQUEUE_UNITIALIZED_ERROR = 1,
-    SQUEUE_OVERFLOW_ERROR,
-    SQUEUE_ELEMENT_UNITIALIZED_ERROR,
-	SQUEUE_ELEMENT_NOT_FOUND_ERROR
-}CSQueue_Result;
-
 typedef int	(*CSQueueElementAction)(void* _element, void* _context);
 
  /**
@@ -55,11 +46,11 @@ void CSQueueDestroy(CSQueue** _squeue,ElementDestroy _desFunc);
  * @param[in] _squeue - safe queue.
  * @param[in] _element - a new element to insert.
  *
- * @return[success] : SQUEUE_SUCCESS
+ * @return[success] : DS_SUCCESS
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  * @return[failure] : SQUEUE_ELEMENT_UNINITIALIZED_ERROR
  */
-CSQueue_Result CSQueueInsert(CSQueue* _squeue, void* _element);
+aps_ds_error CSQueueInsert(CSQueue* _squeue, void* _element);
 
 
 /** 
@@ -68,10 +59,10 @@ CSQueue_Result CSQueueInsert(CSQueue* _squeue, void* _element);
  * @param[in] _squeue 			- safe queue.
  * @param[out] _returnElement 	- return the element that removed.
  * 								  if _returnElement NULL just remove from queue
- * @return[success] : SQUEUE_SUCCESS
+ * @return[success] : DS_SUCCESS
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  */
-CSQueue_Result CSQueueRemove(CSQueue* _squeue,void** _returnElement);
+aps_ds_error CSQueueRemove(CSQueue* _squeue,void** _returnElement);
 
 /** 
  * @brief : check if CSQueue is empty
@@ -91,7 +82,7 @@ int CSQueueIsEmpty(const CSQueue* _squeue);
  * @param[in] _action - function to preform on safe queue elements
  * @param[in] _context - context for action function.
  */
-CSQueue_Result CSQueueForEach(const CSQueue* _squeue,CSQueueElementAction _action, void* _context);
+aps_ds_error CSQueueForEach(const CSQueue* _squeue,CSQueueElementAction _action, void* _context);
 
 
 #endif /* __CIRCULAR_SAFE_SQUEUE_H__ */

@@ -14,19 +14,10 @@
  *  @bug no bugs known.
  */
 
-
+#include "data_structure_error.h"
 #include <stddef.h> /*< size_t >*/
 
 typedef struct CQueue CQueue;
-
-typedef enum CQueue_Result {
-    QUEUE_SUCCESS = 0xFE91,
-    QUEUE_UNITIALIZED_ERROR = 1,
-    QUEUE_OVERFLOW_ERROR,
-	QUEUE_EMPTY_ERROR,
-    QUEUE_ELEMENT_UNITIALIZED_ERROR
-} CQueue_Result;
-
 typedef int	(*CQueueElementAction)(void* _element, void* _context);
 
  /**
@@ -53,11 +44,11 @@ void CQueueDestroy(CQueue** _queue,void (*_elementDestroy)(void* _item));
  * @param[in] _queue 	- queue.
  * @param[in] _element 	- a new element to insert.
  *
- * @return[success] : SQUEUE_SUCCESS
+ * @return[success] : DS_SUCCESS
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  * @return[failure] : SQUEUE_ELEMENT_UNINITIALIZED_ERROR
  */
-CQueue_Result CQueueInsert(CQueue* _queue, void* _element);
+aps_ds_error CQueueInsert(CQueue* _queue, void* _element);
 
 
 /**
@@ -66,10 +57,10 @@ CQueue_Result CQueueInsert(CQueue* _queue, void* _element);
  * @param[in] _queue 			- queue.
  * @param[out] _returnElement 	- return the element that removed.
  * 								  if _returnElement NULL just remove from queue do not free
- * @return[success] : SQUEUE_SUCCESS
+ * @return[success] : DS_SUCCESS
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  */
-CQueue_Result CQueueRemove(CQueue* _queue, void** _returnElement);
+aps_ds_error CQueueRemove(CQueue* _queue, void** _returnElement);
 
 /**
  * @brief : check if CQueue is empty
@@ -89,10 +80,10 @@ int CQueueIsEmpty(const CQueue* _queue);
  * @param[in] _action - function to perform on safe queue elements
  * @param[in] _context - context for action function.
  *
- * @return[success] : SQUEUE_SUCCESS
+ * @return[success] : DS_SUCCESS
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  */
-CQueue_Result CQueueForEach(const CQueue* _queue, CQueueElementAction _action, void* _context);
+aps_ds_error CQueueForEach(const CQueue* _queue, CQueueElementAction _action, void* _context);
 
 
 #endif /* __CIRCULAR_QUEUE_H__ */

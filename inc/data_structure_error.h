@@ -11,7 +11,9 @@ typedef enum _aps_ds_error {
 	DS_ALLOCATION_ERROR,
 	DS_OVERFLOW_ERROR,					/*< There is no space to insert items and no reallocte >*/
 	DS_UNDERFLOW_ERROR,					/*< There is no items in vector >*/
-    DS_GENERAL_ERROR
+    DS_ELEMENT_NOT_FOUND_ERROR,
+	DS_EMPTY_ERROR,
+	DS_GENERAL_ERROR
 } aps_ds_error;
 
 typedef enum Compare_Result {

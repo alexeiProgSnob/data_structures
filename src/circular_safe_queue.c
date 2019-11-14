@@ -90,21 +90,21 @@ void CSQueueDestroy(CSQueue** _squeue, ElementDestroy _desFunc) {
  * @param[in] _squeue - safe queue.
  * @param[in] _element - a new element to insert.
  *
- * @return[success] : SQUEUE_SUCCESS
+ * @return[success] : DS_SUCCESS
  * @return[failure] : SQUEUE_UNINITIALIZED_ERROR
  * @return[failure] : SQUEUE_ELEMENT_UNINITIALIZED_ERROR
  */
-CSQueue_Result CSQueueInsert(CSQueue* _squeue, void* _element) {
+aps_ds_error CSQueueInsert(CSQueue* _squeue, void* _element) {
     if (_squeue == NULL) {
-        return SQUEUE_UNITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     if (_element == NULL) {
-        return SQUEUE_ELEMENT_UNITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ITEM_ERROR;
     }
 
     _PutElement(_squeue, _element);
-    return SQUEUE_SUCCESS;
+    return DS_SUCCESS;
 }
 
 /**
@@ -115,13 +115,13 @@ CSQueue_Result CSQueueInsert(CSQueue* _squeue, void* _element) {
  * @return[success] : a pointer to the element.
  * @return[failure] : NULL if _squeue is NULL
  */
-CSQueue_Result CSQueueRemove(CSQueue* _squeue, void** _returnElement) {
+aps_ds_error CSQueueRemove(CSQueue* _squeue, void** _returnElement) {
     if (_squeue == NULL || _returnElement == NULL) {
-        return SQUEUE_UNITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     *_returnElement = _GetElement(_squeue);
-    return SQUEUE_SUCCESS;
+    return DS_SUCCESS;
 }
 
 /**
@@ -151,12 +151,12 @@ int CSQueueIsEmpty(const CSQueue* _squeue) {
  * @param[in] _action - function to preform on safe queue elements
  * @param[in] _context - context for action function.
  */
-CSQueue_Result CSQueueForEach(const CSQueue* _squeue, CSQueueElementAction _action,
+aps_ds_error CSQueueForEach(const CSQueue* _squeue, CSQueueElementAction _action,
                             void* _context) {
     size_t i;
     size_t end;
     if (_squeue == NULL || _action == NULL) {
-        return SQUEUE_UNITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     pthread_mutex_lock(&(((CSQueue*)_squeue)->m_mutex));
@@ -171,7 +171,7 @@ CSQueue_Result CSQueueForEach(const CSQueue* _squeue, CSQueueElementAction _acti
         pthread_mutex_unlock(&(((CSQueue*)_squeue)->m_mutex));
     }
 
-    return SQUEUE_SUCCESS;
+    return DS_SUCCESS;
 }
 
 static int _MyActionDestroy(void* _element, void* _context) {

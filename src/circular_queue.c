@@ -56,32 +56,32 @@ void CQueueDestroy(CQueue** _queue, void (*_elementDestroy)(void* _item)) {
     return;
 }
 
-CQueue_Result CQueueInsert(CQueue* _queue, void* _element) {
+aps_ds_error CQueueInsert(CQueue* _queue, void* _element) {
     if (_queue == NULL || _element == NULL) {
-        return QUEUE_UNITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     if (_element == NULL) {
-        return QUEUE_ELEMENT_UNITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ITEM_ERROR;
     }
 
     if (_queue->m_nItems == _queue->m_size) {
-        return QUEUE_OVERFLOW_ERROR;
+        return DS_OVERFLOW_ERROR;
     }
 
     _queue->m_tail = (_queue->m_tail + 1) % _queue->m_size;
     _queue->m_elements[_queue->m_tail] = _element;
     ++_queue->m_nItems;
-    return QUEUE_SUCCESS;
+    return DS_SUCCESS;
 }
 
-CQueue_Result CQueueRemove(CQueue* _queue, void** _returnElement) {
+aps_ds_error CQueueRemove(CQueue* _queue, void** _returnElement) {
     if (_queue == NULL) {
-        return QUEUE_UNITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     if (_queue->m_nItems == 0) {
-        return QUEUE_EMPTY_ERROR;
+        return DS_EMPTY_ERROR;
     }
 
     _queue->m_head = (_queue->m_head + 1) % _queue->m_size;
@@ -89,7 +89,7 @@ CQueue_Result CQueueRemove(CQueue* _queue, void** _returnElement) {
         *_returnElement = *(_queue->m_elements + _queue->m_head);
     }
     --(_queue->m_nItems);
-    return QUEUE_SUCCESS;
+    return DS_SUCCESS;
 }
 
 int CQueueIsEmpty(const CQueue* _queue) {
@@ -103,11 +103,11 @@ int CQueueIsEmpty(const CQueue* _queue) {
     return 0;
 }
 
-CQueue_Result CQueueForEach(const CQueue* _queue, CQueueElementAction _action,
+aps_ds_error CQueueForEach(const CQueue* _queue, CQueueElementAction _action,
                            void* _context) {
     size_t i;
     if (_queue == NULL || _action == NULL) {
-        return QUEUE_UNITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     i = (_queue->m_head) - 1;
@@ -116,5 +116,5 @@ CQueue_Result CQueueForEach(const CQueue* _queue, CQueueElementAction _action,
         _action(_queue->m_elements[i], _context);
     }
 
-    return QUEUE_SUCCESS;
+    return DS_SUCCESS;
 }
