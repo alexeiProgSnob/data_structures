@@ -27,24 +27,24 @@ struct BTree {
 static TreeNode* _CreateAndInitNewNode(void* _data);
 static void _RecursiveInsert(BTree* _tree, TreeNode* _root, TreeNode* _newNode);
 
-typedef void (*DataTrevalTask)(void* _item, void* _context);
-typedef void (*NodeTrevalTask)(TreeNode* _node);
+typedef void (*NodeTravelTask)(TreeNode* _node);
 
-typedef struct _TrevalTasks {
-    DataTrevalTask mTaskOnItem;
-    NodeTrevalTask mTaskOnNode;
-} TrevalTasks;
+typedef struct _TravelTasks {
+    void* mContext;
+    BTreeElementAction mTaskOnItem;
+    NodeTravelTask mTaskOnNode;
+} TravelTasks;
 
-static void _OperateOnNodeAndData(TreeNode* _node, TrevalTasks* _tasks);
+static void _OperateOnNodeAndData(TreeNode* _node, TravelTasks* _tasks);
 
 /*< (Left, Root, Right) >*/
-static void _InorderTreval(TreeNode* _root, TrevalTasks* _tasks);
+static void _InorderTravel(TreeNode* _root, TravelTasks* _tasks);
 
 /*< (Root, Left, Right)  >*/
-static void _PreorderTreval(TreeNode* _root, TrevalTasks* _tasks);
+static void _PreorderTravel(TreeNode* _root, TravelTasks* _tasks);
 
 /*< (Left, Right, Root) >*/
-static void _PostorderTreval(TreeNode* _root, TrevalTasks* _tasks);
+static void _PostorderTravel(TreeNode* _root, TravelTasks* _tasks);
 
 
 BTree* BTreeCreate(CompareFunc _compareFunc) {
@@ -68,17 +68,30 @@ static void _FreeNode(TreeNode* _node) {
     free(_node);
 }
 
- 
-void BTreeDestroy(BTree** _pTree, void (*_elementDestroy)(void* _item)) {
-    TrevalTasks tasks;
-    tasks.mTaskOnItem = _elementDestroy;
+typedef struct FuncOnItem {
+    ElementDestroy mDeleteFunc;
+} FuncOnItem;
+
+void DeleteDataFromNodes(void* _item, void* _context) {
+    FuncOnItem* deleteFunc = (FuncOnItem*)_context;
+    if (NULL != deleteFunc->mDeleteFunc) {
+        deleteFunc->mDeleteFunc(_item);
+    }
+}
+
+void BTreeDestroy(BTree** _pTree, ElementDestroy _elementDestroy) {
+    TravelTasks tasks;
+    FuncOnItem funcOnItem;
+    funcOnItem.mDeleteFunc = _elementDestroy;
+    tasks.mTaskOnItem = DeleteDataFromNodes;
     tasks.mTaskOnNode = _FreeNode;
+    tasks.mContext = (void*)&funcOnItem;
     if (NULL == _pTree || NULL == *_pTree) {
         return;
     }
 
     if (NULL != (*_pTree)->mSentinel.mRoot) {
-        _PostorderTreval((*_pTree)->mSentinel.mRoot, &tasks);
+        _PostorderTravel((*_pTree)->mSentinel.mRoot, &tasks);
     }
 
     free(*_pTree);
@@ -112,6 +125,30 @@ ssize_t BTreeGetNumberOfItems(BTree* _tree) {
     }
 
     return _tree->mNumOfItems; 
+}
+
+aps_ds_error BTreeForEach(BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context) {
+    TravelTasks tasks;
+    if (NULL == _tree || NULL == _action) {
+        return DS_UNINITIALIZED_ERROR;
+    }
+
+    if (NULL == (_tree->mSentinel).mRoot) {
+        return DS_UNINITIALIZED_ITEM_ERROR;
+    }
+
+    tasks.mContext = _context;
+    tasks.mTaskOnItem = _action;
+    tasks.mTaskOnNode = NULL;
+    switch (_travelType) {
+        case IN_ORDER:      _InorderTravel((_tree->mSentinel).mRoot, &tasks); break;
+        case POST_ORDER:    _PostorderTravel((_tree->mSentinel).mRoot, &tasks); break;
+        case PRE_ORDER:     _PreorderTravel((_tree->mSentinel).mRoot, &tasks); break;
+        default:
+            return DS_INVALID_PARAM_ERROR;
+    }
+
+    return DS_SUCCESS;
 }
 
 static void _RecursiveInsert(BTree* _tree, TreeNode* _root, TreeNode* _newNode) {
@@ -157,13 +194,13 @@ static TreeNode* _CreateAndInitNewNode(void* _data) {
     return newNode;
 }
 
-static void _OperateOnNodeAndData(TreeNode* _node, TrevalTasks* _tasks) {
+static void _OperateOnNodeAndData(TreeNode* _node, TravelTasks* _tasks) {
     if (NULL == _node || NULL == _tasks) {
         return;
     }
 
     if (NULL != _tasks->mTaskOnItem) {
-        _tasks->mTaskOnItem(_node->mData);
+        _tasks->mTaskOnItem(_node->mData, _tasks->mContext);
     }
 
     if (NULL != _tasks->mTaskOnNode) {
@@ -172,42 +209,42 @@ static void _OperateOnNodeAndData(TreeNode* _node, TrevalTasks* _tasks) {
 }
 
 /*< (Left, Root, Right) >*/
-static void _InorderTreval(TreeNode* _root, TrevalTasks* _tasks) {
+static void _InorderTravel(TreeNode* _root, TravelTasks* _tasks) {
     if (NULL == _root->mLeftNode && NULL == _root->mRightNode) {
         _OperateOnNodeAndData(_root, _tasks);
         return;
     }
 
     if (NULL != _root->mLeftNode) {
-        _InorderTreval(_root->mLeftNode, _tasks);
+        _InorderTravel(_root->mLeftNode, _tasks);
     }
 
     _OperateOnNodeAndData(_root, _tasks);
 
     if (NULL != _root->mRightNode) {
-        _InorderTreval(_root->mRightNode, _tasks);
+        _InorderTravel(_root->mRightNode, _tasks);
     }
 }
 
 /*< (Left, Right, Root) >*/
-static void _PostorderTreval(TreeNode* _root, TrevalTasks* _tasks) {
+static void _PostorderTravel(TreeNode* _root, TravelTasks* _tasks) {
     if (NULL == _root->mLeftNode && NULL == _root->mRightNode) {
         _OperateOnNodeAndData(_root, _tasks);
         return;
     }
 
     if (NULL != _root->mLeftNode) {
-        _PostorderTreval(_root->mLeftNode, _tasks);
+        _PostorderTravel(_root->mLeftNode, _tasks);
     }
 
     if (NULL != _root->mRightNode) {
-        _PostorderTreval(_root->mRightNode, _tasks);
+        _PostorderTravel(_root->mRightNode, _tasks);
     }
     _OperateOnNodeAndData(_root, _tasks);
 }
 
 
-static void _PreorderTreval(TreeNode* _root, TrevalTasks* _tasks) {
+static void _PreorderTravel(TreeNode* _root, TravelTasks* _tasks) {
         if (NULL == _root->mLeftNode && NULL == _root->mRightNode) {
         _OperateOnNodeAndData(_root, _tasks);
         return;
@@ -215,10 +252,10 @@ static void _PreorderTreval(TreeNode* _root, TrevalTasks* _tasks) {
 
     _OperateOnNodeAndData(_root, _tasks);
     if (NULL != _root->mLeftNode) {
-        _PreorderTreval(_root->mLeftNode, _tasks);
+        _PreorderTravel(_root->mLeftNode, _tasks);
     }
 
     if (NULL != _root->mRightNode) {
-        _PreorderTreval(_root->mRightNode, _tasks);
+        _PreorderTravel(_root->mRightNode, _tasks);
     }
 }

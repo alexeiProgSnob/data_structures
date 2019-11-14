@@ -14,7 +14,7 @@
  *  @bug no bugs known.
  */
 
-
+#include "data_structure_error.h"
 #include <stddef.h> /*< size_t >*/
 
 typedef struct CSQueue CSQueue;
@@ -29,7 +29,6 @@ typedef enum CSQueue_Result
 }CSQueue_Result;
 
 typedef int	(*CSQueueElementAction)(void* _element, void* _context);
-typedef void (*ElementDestroy)(void* _element);
 
  /**
   * @brief Create a new CSQueue with given initialize size.

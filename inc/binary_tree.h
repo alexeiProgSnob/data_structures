@@ -16,6 +16,13 @@
 #include <unistd.h> /*< ssize_t >*/
 
 typedef struct BTree BTree;
+typedef void (*BTreeElementAction)(void* _item, void* _context);
+
+typedef enum TravelType {
+    IN_ORDER,
+    POST_ORDER,
+    PRE_ORDER
+} TravelType;
 
 /* For example
 Compare_Result Int_Heap(const void* _a, const void* _b) {
@@ -36,9 +43,11 @@ Compare_Result Int_Heap(const void* _a, const void* _b) {
  */
 BTree* BTreeCreate(CompareFunc _compareFunc);
 
-void BTreeDestroy(BTree** _pTree, void (*_elementDestroy)(void* _item));
+void BTreeDestroy(BTree** _pTree, ElementDestroy _elementDestroy);
 
 aps_ds_error BTreeInsert(BTree* _tree, void* _data);
 
 ssize_t BTreeGetNumberOfItems(BTree* _tree);
+
+aps_ds_error BTreeForEach(BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context);
 #endif /* __BINARY_TREE_H__ */

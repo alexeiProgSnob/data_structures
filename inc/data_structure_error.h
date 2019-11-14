@@ -3,6 +3,7 @@
 
 typedef enum _aps_ds_error {
 	DS_SUCCESS,
+	DS_INVALID_PARAM_ERROR,
 	DS_UNINITIALIZED_ERROR,				/*< Uninitialized vector error >*/
 	DS_OUT_OF_BOUNDS_ERROR,		        /*< Trying to get value in out of bounds >*/
 	DS_UNINITIALIZED_ITEM_ERROR,		/*< Uninitialized item error >*/
@@ -22,5 +23,6 @@ typedef enum Compare_Result {
 
 typedef Compare_Result (*CompareFunc)(const void*, const void*);
 
+typedef void (*ElementDestroy)(void* _item);
 
 #endif /* __DATA_STRUCTURE_ERROR_H_ */
