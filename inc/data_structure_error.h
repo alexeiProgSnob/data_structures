@@ -1,6 +1,8 @@
 #ifndef __DATA_STRUCTURE_ERROR_H_
 #define __DATA_STRUCTURE_ERROR_H_
 
+#define MAX(a,b)  (a < b ? b : a)
+
 typedef enum _aps_ds_error {
 	DS_SUCCESS,
 	DS_INVALID_PARAM_ERROR,
@@ -13,6 +15,7 @@ typedef enum _aps_ds_error {
 	DS_UNDERFLOW_ERROR,					/*< There is no items in vector >*/
     DS_ELEMENT_NOT_FOUND_ERROR,
 	DS_EMPTY_ERROR,
+	DS_KEY_EXISTS_ERROR,
 	DS_GENERAL_ERROR
 } aps_ds_error;
 

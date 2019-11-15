@@ -25,13 +25,17 @@ typedef enum TravelType {
 } TravelType;
 
 /* For example
-Compare_Result Int_Heap(const void* _a, const void* _b) {
+Compare_Result Int(const void* _a, const void* _b) {
     const int* a = (const int*)_a;
     const int* b = (const int*)_b;
     if (a > b) {
         return BIGGER;
     }
-
+    
+    if (a == b) {
+        return EQUAL;
+    }
+    
     return SMALLER;
 }
 */
@@ -47,11 +51,17 @@ void BTreeDestroy(BTree** _pTree, ElementDestroy _elementDestroy);
 
 aps_ds_error BTreeInsert(BTree* _tree, void* _data);
 
-aps_ds_error BTreeRemoveData(BTree* _tree, void** _pData);
+aps_ds_error BTreeRemove(BTree* _tree, void* _keyToFind, void** _pData);
 
-aps_ds_error BTreeGetItem(BTree* _tree, void** _pData);
+aps_ds_error BTreeGetItem(BTree* _tree, void* _keyToFind, void** _pData);
 
 ssize_t BTreeGetNumberOfItems(BTree* _tree);
+
+void* BTreeGetMin(BTree* _tree);
+
+void* BTreeGetMax(BTree* _tree);
+
+ssize_t BTreeGetTreeHeight(BTree* _tree);
 
 aps_ds_error BTreeForEach(BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context);
 #endif /* __BINARY_TREE_H__ */

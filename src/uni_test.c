@@ -58,6 +58,10 @@ Compare_Result CompareSizeT(const void* _generalTypeA, const void* _generalTypeB
         return BIGGER;
     }
 
+    if (*typeA == *typeB) {
+        return EQUAL;
+    }
+
     return SMALLER;
 }
 
@@ -337,6 +341,106 @@ UNIT(Allocate_BTree)
     ASSERT_THAT(NULL == newDataS); 
 END_UNIT
 
+/*
+Compare_Result CompareSizeT(const void* _generalTypeA, const void* _generalTypeB)
+*/
+typedef struct ArrIndexSize {
+    size_t* m_arr;
+    size_t m_indx;
+    size_t m_size;
+} ArrIndexSize;
+
+void PrintSizeTAndAddToArrayForValidate(void* _item, void* _context) {
+    ArrIndexSize* dataToFill = (ArrIndexSize*)_context;
+    printf("%lu ", *((size_t*)(_item)));
+    if (dataToFill->m_indx < dataToFill->m_size) {
+        (dataToFill->m_arr)[dataToFill->m_indx] = *((size_t*)(_item));
+        ++dataToFill->m_indx;
+    }
+}
+
+UNIT(BTree_Valid_Unit_Test)
+    size_t i = 0;
+    size_t arr[] = {2,1,4,3};
+    size_t inOrder[4] = {0};
+    size_t inOrderRes[] = {1,2,3,4};
+    size_t postOrder[4] = {0};
+    size_t postOrderRes[] = {1,3,4,2};
+    size_t preOrder[4] = {0};
+    size_t preOrderRes[] = {2,1,4,3};
+    size_t invalidElement = 5;
+    size_t* element = NULL;
+    ArrIndexSize context;
+    aps_ds_error resultChecker = DS_SUCCESS;
+    BTree* newDataS = BTreeCreate(CompareSizeT);
+    ASSERT_THAT(NULL != newDataS);
+    for (i = 0 ; i < 4; ++i) {
+        resultChecker = BTreeInsert(newDataS, arr + i);
+        ASSERT_THAT(resultChecker == DS_SUCCESS);
+    }
+
+    ASSERT_THAT(BTreeGetNumberOfItems(newDataS) == 4);
+
+    element = BTreeGetMin(newDataS);
+    ASSERT_THAT_WITH_MESSAGE("Validate BTreeGetMin", *element == 1);
+ 
+    element = BTreeGetMax(newDataS);
+    ASSERT_THAT_WITH_MESSAGE("Validate BTreeGetMax", *element == 4);
+
+    context.m_arr = inOrder;
+    context.m_indx = 0;
+    context.m_size = 4;
+    resultChecker = BTreeForEach(newDataS, IN_ORDER, PrintSizeTAndAddToArrayForValidate, &context);
+    ASSERT_THAT_WITH_MESSAGE("BTreeForEach expected to succeed", resultChecker == DS_SUCCESS);
+    printf("\n");
+    ASSERT_THAT_WITH_MESSAGE("Validate IN_ORDER BTreeForEach", CompareTwoArrays(inOrder, inOrderRes, 4) == 0);
+
+    context.m_arr = postOrder;
+    context.m_indx = 0;
+    context.m_size = 4;
+    resultChecker = BTreeForEach(newDataS, POST_ORDER, PrintSizeTAndAddToArrayForValidate, &context);
+    printf("\n");
+    ASSERT_THAT_WITH_MESSAGE("BTreeForEach expected to succeed", resultChecker == DS_SUCCESS);
+    ASSERT_THAT_WITH_MESSAGE("Validate POST_ORDER BTreeForEach", CompareTwoArrays(postOrder, postOrderRes, 4) == 0);
+
+    context.m_arr = preOrder;
+    context.m_indx = 0;
+    context.m_size = 4;
+    resultChecker = BTreeForEach(newDataS, PRE_ORDER, PrintSizeTAndAddToArrayForValidate, &context);
+    printf("\n");
+    ASSERT_THAT_WITH_MESSAGE("BTreeForEach expected to succeed", resultChecker == DS_SUCCESS);
+    ASSERT_THAT_WITH_MESSAGE("Validate PRE_ORDER BTreeForEach", CompareTwoArrays(preOrder, preOrderRes, 4) == 0);
+
+    for (i = 0 ; i < 4; ++i) {
+        resultChecker = BTreeGetItem(newDataS, arr + i, (void**)&element);
+        ASSERT_THAT_WITH_MESSAGE("BTreeGetItem expected to succeed", resultChecker == DS_SUCCESS);
+        ASSERT_THAT_WITH_MESSAGE("BTreeGetItem element received not as expected", arr[i] == *element);
+    }
+
+    resultChecker = BTreeGetItem(newDataS, &invalidElement, (void**)&element);
+    ASSERT_THAT_WITH_MESSAGE("BTreeGetItem expected to succeed", resultChecker == DS_ELEMENT_NOT_FOUND_ERROR);
+
+    invalidElement = 2;
+    resultChecker = BTreeInsert(newDataS, &invalidElement);
+    ASSERT_THAT_WITH_MESSAGE("BTreeInsert expected to fail to insert", resultChecker == DS_KEY_EXISTS_ERROR);
+
+    printf("-----------remove-----------\n");
+    for (i = 0 ; i < 4; ++i) {
+        resultChecker = BTreeRemove(newDataS, arr + i, (void**)&element);
+        ASSERT_THAT_WITH_MESSAGE("BTreeRemove expected to succeed", resultChecker == DS_SUCCESS);
+        ASSERT_THAT_WITH_MESSAGE("BTreeRemove element received not as expected", arr[i] == *element);
+
+        context.m_arr = inOrder;
+        context.m_indx = 0;
+        context.m_size = 4;
+        BTreeForEach(newDataS, IN_ORDER, PrintSizeTAndAddToArrayForValidate, &context);
+        printf("\n");
+    }
+
+    BTreeDestroy(&newDataS, NULL);
+    ASSERT_THAT(NULL == newDataS); 
+END_UNIT
+
 
 TEST_SUITE(Test DataStructures)
     /* bubble Sort Tests */
@@ -370,5 +474,5 @@ TEST_SUITE(Test DataStructures)
 
     /* Binary Tree Tests */
     TEST(Allocate_BTree)
-
+    TEST(BTree_Valid_Unit_Test)
 END_SUITE

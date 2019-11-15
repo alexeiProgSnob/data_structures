@@ -35,7 +35,19 @@ typedef struct TEST_PAIR{
 #define END_UNIT               return PASS; \
                             }
 
-#define ASSERT_THAT(e)      do{ if(!(e)) return FAIL;} while(0)
+#define ASSERT_THAT_WITH_MESSAGE(str, e) do{\
+    if (!(e)) {\
+        fprintf(stderr,KRED "Line %d Assert Fail\n%s\n" KWHT,__LINE__, (str));\
+        return FAIL;\
+    }\
+} while(0)
+
+#define ASSERT_THAT(e)      do{\
+    if (!(e)) {\
+        fprintf(stderr,KRED "Line %d Assert Fail\n" KWHT, __LINE__);\
+        return FAIL;\
+    }\
+} while(0)
 
 #define TEST_SUITE(name)    int main(){\
                                 const char *test_name = #name; \
