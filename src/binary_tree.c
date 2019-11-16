@@ -166,6 +166,30 @@ aps_ds_error BTreeGetItem(BTree* _tree, void* _keyToFind, void** _pData) {
     return DS_SUCCESS;
 }
 
+aps_ds_error BTreeForEach(BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context) {
+    TravelTasks tasks;
+    if (NULL == _tree || NULL == _action) {
+        return DS_UNINITIALIZED_ERROR;
+    }
+
+    if (NULL == (_tree->m_sentinel).m_root) {
+        return DS_UNINITIALIZED_ITEM_ERROR;
+    }
+
+    tasks.m_context = _context;
+    tasks.m_taskOnItem = _action;
+    tasks.m_taskOnNode = NULL;
+    switch (_travelType) {
+        case IN_ORDER:      _InorderTravel((_tree->m_sentinel).m_root, &tasks); break;
+        case POST_ORDER:    _PostorderTravel((_tree->m_sentinel).m_root, &tasks); break;
+        case PRE_ORDER:     _PreorderTravel((_tree->m_sentinel).m_root, &tasks); break;
+        default:
+            return DS_INVALID_PARAM_ERROR;
+    }
+
+    return DS_SUCCESS;
+}
+
 ssize_t BTreeGetNumberOfItems(BTree* _tree) {
     if (NULL == _tree) {
         return -1;
@@ -205,28 +229,11 @@ void* BTreeGetMax(BTree* _tree) {
     return _GetMinOrMaxFromTree(_tree, _MaxValueNode);
 }
 
-aps_ds_error BTreeForEach(BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context) {
-    TravelTasks tasks;
-    if (NULL == _tree || NULL == _action) {
-        return DS_UNINITIALIZED_ERROR;
+void* BTreeGetRoot(BTree* _tree) {
+    if (NULL == _tree) {
+        return NULL;
     }
-
-    if (NULL == (_tree->m_sentinel).m_root) {
-        return DS_UNINITIALIZED_ITEM_ERROR;
-    }
-
-    tasks.m_context = _context;
-    tasks.m_taskOnItem = _action;
-    tasks.m_taskOnNode = NULL;
-    switch (_travelType) {
-        case IN_ORDER:      _InorderTravel((_tree->m_sentinel).m_root, &tasks); break;
-        case POST_ORDER:    _PostorderTravel((_tree->m_sentinel).m_root, &tasks); break;
-        case PRE_ORDER:     _PreorderTravel((_tree->m_sentinel).m_root, &tasks); break;
-        default:
-            return DS_INVALID_PARAM_ERROR;
-    }
-
-    return DS_SUCCESS;
+    return _tree->m_sentinel.m_root;
 }
 
 static aps_ds_error _RecursiveInsert(BTree* _tree, TreeNode* _root, TreeNode* _newNode) {
