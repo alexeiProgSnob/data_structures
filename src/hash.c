@@ -1,6 +1,6 @@
 #include "hash.h"
 #include "list.h"
-#include <stdlib.h>
+#include <stdlib.h> /*< malloc >*/
 
 #define INSERT 666
 #define REMOVE 42
@@ -19,7 +19,7 @@ typedef struct Elements {
 
 typedef struct SearchStruct {
     void* m_searchKey;
-    EqualityFunction m_keyEqaul;
+    EqualityFunction m_keyEqual;
 } SearchStruct;
 
 typedef struct ForEachStruct {
@@ -27,29 +27,21 @@ typedef struct ForEachStruct {
     KeyValueActionFunction m_KeyValFunc;
 } ForEachStruct;
 
-static HashMap* _InitHashMap(HashMap* _hash, List** _plists, size_t _capacity,
-                             HashFunction _hashFunc,
-                             EqualityFunction _keysEqualFunc);
+static HashMap* _InitHashMap(HashMap* _hash, List** _pLists, size_t _capacity, HashFunction _hashFunc, EqualityFunction _keysEqualFunc);
 static void _InitMapStats(Map_Stats* _stats, size_t _capacity);
-
 static size_t _FindNextPrime(size_t _capacity);
 static int _PrimeNumCheck(size_t _n);
-
 static Elements* _CreateNewPair(const void* _key, const void* _value);
 static ListItr _CalcIndexSearchKey(const HashMap* _map, const void* _key);
 static int _SearchKey(void* _item, void* _context);
-
 static int _ActionOnPair(void* _item, void* _context);
-
-static void _DestroyList(List* _list, void (*_keyDestroy)(void* _key),
-                         void (*_valDestroy)(void* _value));
+static void _DestroyList(List* _list, void (*_keyDestroy)(void* _key), void (*_valDestroy)(void* _value));
 
 static void _CheckMax(size_t* _maxChainLength, size_t _listSize);
 
-HashMap* HashMapCreate(size_t _capacity, HashFunction _hashFunc,
-                       EqualityFunction _keysEqualFunc) {
+HashMap* HashMapCreate(size_t _capacity, HashFunction _hashFunc, EqualityFunction _keysEqualFunc) {
     HashMap* hash;
-    List** plists;
+    List** pLists;
     size_t i;
 
     if (_hashFunc == NULL || _keysEqualFunc == NULL) {
@@ -62,25 +54,25 @@ HashMap* HashMapCreate(size_t _capacity, HashFunction _hashFunc,
         return NULL;
     }
 
-    plists = (List**)malloc(_capacity * sizeof(List*));
-    if (NULL == plists) {
+    pLists = (List**)malloc(_capacity * sizeof(List*));
+    if (NULL == pLists) {
         free(hash);
         return NULL;
     }
 
     for (i = 0; i < _capacity; ++i) {
-        plists[i] = ListCreate();
-        if (plists[i] == NULL) {
+        pLists[i] = ListCreate();
+        if (pLists[i] == NULL) {
             while (i > 0) {
-                free(plists[--i]);
+                free(pLists[--i]);
             }
             free(hash);
-            free(plists);
+            free(pLists);
             return NULL;
         }
     }
 
-    return _InitHashMap(hash, plists, _capacity, _hashFunc, _keysEqualFunc);
+    return _InitHashMap(hash, pLists, _capacity, _hashFunc, _keysEqualFunc);
 }
 
 void HashMapDestroy(HashMap** _map, void (*_keyDestroy)(void* _key),
@@ -99,94 +91,94 @@ void HashMapDestroy(HashMap** _map, void (*_keyDestroy)(void* _key),
     *_map = NULL;
 }
 
-Map_Result HashMapRehash(HashMap* _map, size_t newCapacity) {
+aps_ds_error HashMapRehash(HashMap* _map, size_t newCapacity) {
     List** tempList;
     newCapacity = _FindNextPrime(newCapacity);
     tempList = (List**)realloc(_map->m_lists, newCapacity * sizeof(List*));
     if (tempList == NULL) {
-        return MAP_ALLOCATION_ERROR;
+        return DS_ALLOCATION_ERROR;
     }
     _map->m_lists = tempList;
-    return MAP_SUCCESS;
+    return DS_SUCCESS;
 }
 
-Map_Result HashMapInsert(HashMap* _map, const void* _key, const void* _value) {
+aps_ds_error HashMapInsert(HashMap* _map, const void* _key, const void* _value) {
     ListItr itr;
     Elements* elements;
 
     if (_map == NULL || _value == NULL) {
-        return MAP_UNINITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     if (_key == NULL) {
-        return MAP_KEY_NULL_ERROR;
+        return DS_INVALID_PARAM_ERROR;
     }
 
     itr = _CalcIndexSearchKey(_map, _key);
     if (itr != ListItr_Next(itr)) {
-        return MAP_KEY_DUPLICATE_ERROR;
+        return DS_KEY_EXISTS_ERROR;
     }
 
     elements = _CreateNewPair(_key, _value);
     if (elements == NULL) {
-        return MAP_ALLOCATION_ERROR;
+        return DS_ALLOCATION_ERROR;
     }
 
     itr = ListItr_InsertBefore(itr, elements);
     if (itr == NULL) {
-        return MAP_ALLOCATION_ERROR;
+        return DS_ALLOCATION_ERROR;
     }
 
-    return MAP_SUCCESS;
+    return DS_SUCCESS;
 }
 
-Map_Result HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey,
+aps_ds_error HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey,
                          void** _pValue) {
     ListItr itr;
     Elements* elements;
 
     if (_map == NULL || _pKey == NULL || _pValue == NULL) {
-        return MAP_UNINITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     if (_searchKey == NULL) {
-        return MAP_KEY_NULL_ERROR;
+        return DS_INVALID_PARAM_ERROR;
     }
 
     itr = _CalcIndexSearchKey(_map, _searchKey);
     if (itr == ListItr_Next(itr)) {
-        return MAP_KEY_NOT_FOUND_ERROR;
+        return DS_ELEMENT_NOT_FOUND_ERROR;
     }
 
     elements = ListItr_Remove(itr);
     *_pValue = elements->m_value;
     *_pKey = elements->m_key;
     free(elements);
-    return MAP_SUCCESS;
+    return DS_SUCCESS;
 }
 
-Map_Result HashMapFind(const HashMap* _map, const void* __searchKey,
+aps_ds_error HashMapFind(const HashMap* _map, const void* __searchKey,
                        void** _pValue) {
     ListItr itr;
     Elements* elements;
 
     if (_map == NULL || _pValue == NULL) {
-        return MAP_UNINITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     if (__searchKey == NULL) {
-        return MAP_KEY_NULL_ERROR;
+        return DS_INVALID_PARAM_ERROR;
     }
 
     itr = _CalcIndexSearchKey(_map, __searchKey);
 
     if (itr == ListItr_Next(itr)) {
-        return MAP_KEY_NOT_FOUND_ERROR;
+        return DS_ELEMENT_NOT_FOUND_ERROR;
     }
 
     elements = ListItr_Get(itr);
     *_pValue = (void*)elements->m_value;
-    return MAP_SUCCESS;
+    return DS_SUCCESS;
 }
 
 size_t HashMapSize(const HashMap* _map) {
@@ -204,7 +196,7 @@ size_t HashMapForEach(const HashMap* _map, KeyValueActionFunction _action,
     ListItr end;
     ForEachStruct sForEach;
     if (_map == NULL || _action == NULL) {
-        return MAP_UNINITIALIZED_ERROR;
+        return DS_UNINITIALIZED_ERROR;
     }
 
     sForEach.m_context = _context;
@@ -280,7 +272,7 @@ static ListItr _CalcIndexSearchKey(const HashMap* _map, const void* _key) {
     end = ListItr_End(_map->m_lists[idx]);
 
     search.m_searchKey = (void*)_key;
-    search.m_keyEqaul = _map->m_keysEqualFunc;
+    search.m_keyEqual = _map->m_keysEqualFunc;
 
     itr = ListItr_FindFirst(begin, end, _SearchKey, &search);
 
@@ -290,7 +282,7 @@ static ListItr _CalcIndexSearchKey(const HashMap* _map, const void* _key) {
 static int _SearchKey(void* _item, void* _context) {
     SearchStruct* search = _context;
     Elements* element = _item;
-    return !(search->m_keyEqaul(search->m_searchKey, element->m_key));
+    return !(search->m_keyEqual(search->m_searchKey, element->m_key));
 }
 
 static size_t _FindNextPrime(size_t _capacity) {
@@ -328,10 +320,10 @@ static void _DestroyList(List* _list, void (*_keyDestroy)(void* _key),
     }
 }
 
-static HashMap* _InitHashMap(HashMap* _hash, List** _plists, size_t _capacity,
+static HashMap* _InitHashMap(HashMap* _hash, List** _pLists, size_t _capacity,
                              HashFunction _hashFunc,
                              EqualityFunction _keysEqualFunc) {
-    _hash->m_lists = _plists;
+    _hash->m_lists = _pLists;
     _hash->m_capacity = _capacity;
     _hash->m_hashFunc = _hashFunc;
     _hash->m_keysEqualFunc = _keysEqualFunc;

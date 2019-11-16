@@ -1,8 +1,6 @@
 #ifndef __HASHMAP_H__
 #define __HASHMAP_H__
 
-#include <stddef.h>  /* size_t */
-
 /** 
  *  @file hash.h
  *  @brief Generic Hash map of key-value pairs implemented with separate chaining using linked lists.
@@ -17,18 +15,10 @@
  *  @bug No known bugs.
  */
 
+#include "data_structure_error.h"
+#include <stddef.h>  /* size_t */
 
 typedef struct HashMap HashMap;
-
-typedef enum Map_Result {
-	MAP_SUCCESS = 0,
-	MAP_UNINITIALIZED_ERROR, 		/**< Uninitialized map error 	*/
-	MAP_KEY_NULL_ERROR, 			/**< Key was null 				*/
-	MAP_KEY_DUPLICATE_ERROR, 		/**< Duplicate key error 		*/
-	MAP_KEY_NOT_FOUND_ERROR, 		/**< Key not found 				*/
-	MAP_ALLOCATION_ERROR 			/**< Allocation error 	 		*/
-} Map_Result;
-
 
 typedef size_t (*HashFunction)(const void* _key);
 typedef int (*EqualityFunction)(const void* _firstKey, const void* _secondKey);
@@ -60,9 +50,9 @@ void HashMapDestroy(HashMap** _map, void (*_keyDestroy)(void* _key), void (*_val
  * @brief Adjust map capacity and rehash all key/value pairs
  * @param[in] _map - existing map
  * @param[in] _newCapacity - new capacity shall be rounded to nearest larger prime number.
- * @return MAP_SUCCESS or MAP_ALLOCATION_ERROR
+ * @return DS_SUCCESS or DS_ALLOCATION_ERROR
  */
-Map_Result HashMapRehash(HashMap *_map, size_t newCapacity);
+aps_ds_error HashMapRehash(HashMap *_map, size_t newCapacity);
 
 
 /** 
@@ -71,15 +61,15 @@ Map_Result HashMapRehash(HashMap *_map, size_t newCapacity);
  * @param[in] _key - key to serve as index 
  * @param[in] _value - the value to associate with the key 
  * @return Success indicator
- * @retval  MAP_SUCCESS	on success
- * @retval  MAP_KEY_DUPLICATE_ERROR	if key alread present in the map
- * @retval  MAP_KEY_NULL_ERROR
- * @retval  MAP_ALLOCATION_ERROR on failer to allocate key-value pair
- * @retval  MAP_UNINITIALIZED_ERROR
+ * @retval  DS_SUCCESS	on success
+ * @retval  DS_KEY_EXISTS_ERROR	if key already present in the map
+ * @retval  DS_INVALID_PARAM_ERROR
+ * @retval  DS_ALLOCATION_ERROR on failure to allocate key-value pair
+ * @retval  DS_UNINITIALIZED_ERROR
  * 
  * @warning key must be unique and destinct
  */
-Map_Result HashMapInsert(HashMap* _map, const void* _key, const void* _value);
+aps_ds_error HashMapInsert(HashMap* _map, const void* _key, const void* _value);
 
 
 /** 
@@ -89,14 +79,14 @@ Map_Result HashMapInsert(HashMap* _map, const void* _key, const void* _value);
  * @param[out] _pKey - pointer to variable that will get the key stored in the map equaling _searchKey
  * @param[out] _pValue - pointer to variable that will get the value stored in the map corresponding to foind key
  * @return Success indicator
- * @retval  MAP_SUCCESS	on success
- * @retval  MAP_KEY_NULL_ERROR
- * @retval  MAP_KEY_NOT_FOUND_ERROR if key not found
- * @retval  MAP_UNINITIALIZED_ERROR
+ * @retval  DS_SUCCESS	on success
+ * @retval  DS_INVALID_PARAM_ERROR
+ * @retval  DS_ELEMENT_NOT_FOUND_ERROR if key not found
+ * @retval  DS_UNINITIALIZED_ERROR
  * 
  * @warning key must be unique and destinct
  */
-Map_Result HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey, void** _pValue);
+aps_ds_error HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey, void** _pValue);
 
 
 /** 
@@ -105,14 +95,14 @@ Map_Result HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey, vo
  * @param[in] _searchKey - key to serve as index for search
  * @param[out] _pValue - pointer to variable that will get the value assoiciated with the search key.
  * @return Success indicator
- * @retval  MAP_SUCCESS	on success
- * @retval  MAP_KEY_NULL_ERROR
- * @retval  MAP_KEY_NOT_FOUND_ERROR if key not found
- * @retval  MAP_UNINITIALIZED_ERROR
+ * @retval  DS_SUCCESS	on success
+ * @retval  DS_INVALID_PARAM_ERROR
+ * @retval  DS_ELEMENT_NOT_FOUND_ERROR if key not found
+ * @retval  DS_UNINITIALIZED_ERROR
  * 
  * @warning key must be unique and destinct
  */
-Map_Result HashMapFind(const HashMap* _map, const void* __searchKey, void** _pValue);
+aps_ds_error HashMapFind(const HashMap* _map, const void* __searchKey, void** _pValue);
 
 
 /**

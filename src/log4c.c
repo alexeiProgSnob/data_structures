@@ -110,7 +110,7 @@ static int InsertLogToHash(struct _Zlog* _log, log_data* _data_log) {
     }
     _log->m_log_level = _data_log->m_level;
     _log->m_fp = fopen(_data_log->m_file_name, "a");
-    if (HashMapInsert(g_map, _log->m_modual, _log) != MAP_SUCCESS) {
+    if (HashMapInsert(g_map, _log->m_modual, _log) != DS_SUCCESS) {
         return -1;
     }
     return 0;
@@ -193,9 +193,9 @@ void zlog_init(const char* _file_name) {
 
 Zlog zlog_get(const char* _modual) {
     Zlog log;
-    Map_Result res;
+    aps_ds_error res;
     res = HashMapFind(g_map, _modual, (void**)&log);
-    if (res == MAP_SUCCESS) {
+    if (res == DS_SUCCESS) {
         return log;
     }
     HashMapFind(g_map, "#", (void**)&log);
