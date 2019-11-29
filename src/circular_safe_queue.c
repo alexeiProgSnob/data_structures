@@ -41,17 +41,17 @@ static void _PutElement(CSQueue* _squeue, void* _element);
  */
 CSQueue* CSQueueCreate(size_t _initSize) {
     CSQueue* pQue;
-    if (_initSize == 0) {
+    if (0 == _initSize) {
         return NULL;
     }
 
     pQue = (CSQueue*)malloc(sizeof(CSQueue));
-    if (pQue == NULL) {
+    if (NULL == pQue) {
         return NULL;
     }
 
     pQue->m_elements = (void**)malloc(_initSize * sizeof(void*));
-    if (pQue->m_elements == NULL) {
+    if (NULL == pQue->m_elements) {
         free(pQue);
         return NULL;
     }
@@ -95,11 +95,11 @@ void CSQueueDestroy(CSQueue** _squeue, ElementDestroy _desFunc) {
  * @return[failure] : SQUEUE_ELEMENT_UNINITIALIZED_ERROR
  */
 aps_ds_error CSQueueInsert(CSQueue* _squeue, void* _element) {
-    if (_squeue == NULL) {
+    if (NULL == _squeue) {
         return DS_UNINITIALIZED_ERROR;
     }
 
-    if (_element == NULL) {
+    if (NULL == _element) {
         return DS_UNINITIALIZED_ITEM_ERROR;
     }
 
@@ -116,7 +116,7 @@ aps_ds_error CSQueueInsert(CSQueue* _squeue, void* _element) {
  * @return[failure] : NULL if _squeue is NULL
  */
 aps_ds_error CSQueueRemove(CSQueue* _squeue, void** _returnElement) {
-    if (_squeue == NULL || _returnElement == NULL) {
+    if (NULL == _squeue || NULL ==  _returnElement) {
         return DS_UNINITIALIZED_ERROR;
     }
 
@@ -133,11 +133,11 @@ aps_ds_error CSQueueRemove(CSQueue* _squeue, void** _returnElement) {
  * @return[success] : 0 if not empty
  */
 int CSQueueIsEmpty(const CSQueue* _squeue) {
-    if (_squeue == NULL) {
+    if (NULL == _squeue) {
         return 1;
     }
 
-    if (_squeue->m_nItems == 0) {
+    if (0 == _squeue->m_nItems) {
         return 1;
     }
 
@@ -155,7 +155,7 @@ aps_ds_error CSQueueForEach(const CSQueue* _squeue, CSQueueElementAction _action
                             void* _context) {
     size_t i;
     size_t end;
-    if (_squeue == NULL || _action == NULL) {
+    if (NULL == _squeue || NULL == _action) {
         return DS_UNINITIALIZED_ERROR;
     }
 
@@ -213,7 +213,7 @@ static CSQueue* _InitSemMutex(CSQueue* _squeue, size_t _initSize) {
 static CSQueue* _InitCSQueue(CSQueue* _squeue, size_t _initSize) {
 
     _squeue = _InitSemMutex(_squeue, _initSize);
-    if (_squeue == NULL) {
+    if (NULL == _squeue) {
         return NULL;
     }
 

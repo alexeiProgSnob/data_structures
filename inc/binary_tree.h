@@ -89,7 +89,7 @@ aps_ds_error BTreeGetItem(const BTree* _tree, const void* _keyToFind, void** _pD
  * @param[in] _context  - User provided context, will be sent to _action
  * @returns[success] DS_SUCCESS
  */
-aps_ds_error BTreeForEach(BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context);
+aps_ds_error BTreeForEach(const BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context);
 
 /** 
  * @brief Get The minimal key data.

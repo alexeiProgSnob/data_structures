@@ -166,7 +166,7 @@ aps_ds_error BTreeGetItem(const BTree* _tree, const void* _keyToFind, void** _pD
     return DS_SUCCESS;
 }
 
-aps_ds_error BTreeForEach(BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context) {
+aps_ds_error BTreeForEach(const BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context) {
     TravelTasks tasks;
     if (NULL == _tree || NULL == _action) {
         return DS_UNINITIALIZED_ERROR;
