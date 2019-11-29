@@ -70,7 +70,7 @@ aps_ds_error BTreeInsert(BTree* _tree, void* _data);
  * @param[out]_pData        - pointer to get the data that was removed.It could be NULL.
  * @return[success] DS_SUCCESS 
  */
-aps_ds_error BTreeRemove(BTree* _tree, void* _keyToFind, void** _pData);
+aps_ds_error BTreeRemove(BTree* _tree, const void* _keyToFind, void** _pData);
 
 /** 
  * @brief Get praticular data from binary search tree.
@@ -79,7 +79,7 @@ aps_ds_error BTreeRemove(BTree* _tree, void* _keyToFind, void** _pData);
  * @param[out]_pData        - pointer to get the data that will be returned.
  * @return[success] DS_SUCCESS 
  */
-aps_ds_error BTreeGetItem(const BTree* _tree, void* _keyToFind, void** _pData);
+aps_ds_error BTreeGetItem(const BTree* _tree, const void* _keyToFind, void** _pData);
 
 /**
  * @brief Iterate over all elements in the tree.

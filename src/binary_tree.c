@@ -35,8 +35,8 @@ static void _OperateOnNodeAndData(TreeNode* _node, TravelTasks* _tasks);
 static size_t _TreeHeight(TreeNode* _root);
 static TreeNode* _MaxValueNode(TreeNode* _root);
 static TreeNode* _MinValueNode(TreeNode* _root);
-static TreeNode* _FindNode(TreeNode* _root, void* _keyToFind, CompareFunc _compare);
-static TreeNode* _RecursiveDeletion(TreeNode* _root, void* _keyToFind, void** _pData, CompareFunc _compare);
+static TreeNode* _FindNode(TreeNode* _root, const void* _keyToFind, CompareFunc _compare);
+static TreeNode* _RecursiveDeletion(TreeNode* _root, const void* _keyToFind, void** _pData, CompareFunc _compare);
 
 /*< (Left, Root, Right) >*/
 static void _InorderTravel(TreeNode* _root, TravelTasks* _tasks);
@@ -122,7 +122,7 @@ aps_ds_error BTreeInsert(BTree* _tree, void* _data) {
     return DS_SUCCESS;
 }
 
-aps_ds_error BTreeRemove(BTree* _tree, void* _keyToFind, void** _pData) {
+aps_ds_error BTreeRemove(BTree* _tree, const void* _keyToFind, void** _pData) {
     void* retData = NULL;
     if (NULL == _tree || NULL == _keyToFind) {
         return DS_UNINITIALIZED_ERROR;
@@ -146,7 +146,7 @@ aps_ds_error BTreeRemove(BTree* _tree, void* _keyToFind, void** _pData) {
     return DS_SUCCESS;
 }
 
-aps_ds_error BTreeGetItem(const BTree* _tree, void* _keyToFind, void** _pData) {
+aps_ds_error BTreeGetItem(const BTree* _tree, const void* _keyToFind, void** _pData) {
     TreeNode* foundNode = NULL;
     if (NULL == _tree || NULL == _keyToFind || NULL == _pData) {
         return DS_UNINITIALIZED_ERROR;
@@ -324,7 +324,7 @@ static TreeNode* _MinValueNode(TreeNode* _root) {
     return _MinValueNode(_root->m_leftNode);
 }
 
-static TreeNode* _RecursiveDeletion(TreeNode* _root, void* _keyToFind, void** _pData, CompareFunc _compare) {
+static TreeNode* _RecursiveDeletion(TreeNode* _root, const void* _keyToFind, void** _pData, CompareFunc _compare) {
     Compare_Result compareResult = 0xFFFFFF;
     TreeNode* retNode = _root;
     TreeNode* minValueNode = NULL;
@@ -358,7 +358,7 @@ static TreeNode* _RecursiveDeletion(TreeNode* _root, void* _keyToFind, void** _p
     return retNode;
 }
 
-static TreeNode* _FindNode(TreeNode* _root, void* _keyToFind, CompareFunc _compare) {
+static TreeNode* _FindNode(TreeNode* _root, const void* _keyToFind, CompareFunc _compare) {
     Compare_Result compareResult = 0xFFFFFF;
     if (NULL == _root) {
         return _root;
