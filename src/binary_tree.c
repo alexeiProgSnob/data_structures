@@ -146,7 +146,7 @@ aps_ds_error BTreeRemove(BTree* _tree, void* _keyToFind, void** _pData) {
     return DS_SUCCESS;
 }
 
-aps_ds_error BTreeGetItem(BTree* _tree, void* _keyToFind, void** _pData) {
+aps_ds_error BTreeGetItem(const BTree* _tree, void* _keyToFind, void** _pData) {
     TreeNode* foundNode = NULL;
     if (NULL == _tree || NULL == _keyToFind || NULL == _pData) {
         return DS_UNINITIALIZED_ERROR;
@@ -190,7 +190,7 @@ aps_ds_error BTreeForEach(BTree* _tree, TravelType _travelType, BTreeElementActi
     return DS_SUCCESS;
 }
 
-ssize_t BTreeGetNumberOfItems(BTree* _tree) {
+ssize_t BTreeGetNumberOfItems(const BTree* _tree) {
     if (NULL == _tree) {
         return -1;
     }
@@ -211,7 +211,7 @@ ssize_t BTreeGetTreeHeight(BTree* _tree) {
     return _tree->m_treeHight;
 }
 
-static void* _GetMinOrMaxFromTree(BTree* _tree, TreeNode* (*_staticFunc)(TreeNode*)) {
+static void* _GetMinOrMaxFromTree(const BTree* _tree, TreeNode* (*_staticFunc)(TreeNode*)) {
     TreeNode* node = NULL;
     if (NULL == _tree) {
         return NULL;
@@ -221,15 +221,15 @@ static void* _GetMinOrMaxFromTree(BTree* _tree, TreeNode* (*_staticFunc)(TreeNod
     return node->m_data;
 }
 
-void* BTreeGetMin(BTree* _tree) {
+void* BTreeGetMin(const BTree* _tree) {
     return _GetMinOrMaxFromTree(_tree, _MinValueNode);
 }
 
-void* BTreeGetMax(BTree* _tree) {
+void* BTreeGetMax(const BTree* _tree) {
     return _GetMinOrMaxFromTree(_tree, _MaxValueNode);
 }
 
-void* BTreeGetRoot(BTree* _tree) {
+void* BTreeGetRoot(const BTree* _tree) {
     if (NULL == _tree) {
         return NULL;
     }

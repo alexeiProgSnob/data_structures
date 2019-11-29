@@ -79,7 +79,7 @@ aps_ds_error BTreeRemove(BTree* _tree, void* _keyToFind, void** _pData);
  * @param[out]_pData        - pointer to get the data that will be returned.
  * @return[success] DS_SUCCESS 
  */
-aps_ds_error BTreeGetItem(BTree* _tree, void* _keyToFind, void** _pData);
+aps_ds_error BTreeGetItem(const BTree* _tree, void* _keyToFind, void** _pData);
 
 /**
  * @brief Iterate over all elements in the tree.
@@ -97,7 +97,7 @@ aps_ds_error BTreeForEach(BTree* _tree, TravelType _travelType, BTreeElementActi
  * @returns[success] Pointer to the data
  * @returns[failure] NULL
  */
-void* BTreeGetMin(BTree* _tree);
+void* BTreeGetMin(const BTree* _tree);
 
 /** 
  * @brief Get The maximal key data.
@@ -105,7 +105,7 @@ void* BTreeGetMin(BTree* _tree);
  * @returns[success] Pointer to the data
  * @returns[failure] NULL
  */
-void* BTreeGetMax(BTree* _tree);
+void* BTreeGetMax(const BTree* _tree);
 
 /** 
  * @brief Get The root data.
@@ -113,7 +113,7 @@ void* BTreeGetMax(BTree* _tree);
  * @returns[success] Pointer to the data
  * @returns[failure] NULL
  */
-void* BTreeGetRoot(BTree* _tree);
+void* BTreeGetRoot(const BTree* _tree);
 
 /** 
  * @brief Get height of the tree
@@ -129,6 +129,6 @@ ssize_t BTreeGetTreeHeight(BTree* _tree);
  * @returns[success] number items in a tree
  * @returns[failure] -1
  */
-ssize_t BTreeGetNumberOfItems(BTree* _tree);
+ssize_t BTreeGetNumberOfItems(const BTree* _tree);
 
 #endif /* __BINARY_TREE_H__ */

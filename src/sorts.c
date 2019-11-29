@@ -3,6 +3,15 @@
 #include <stdint.h> /*< uint8_t >*/
 #include <string.h> /*< memscpy >*/
 
+static int _CheckSortInputParameters(
+    void*       _arrayOfDataToSort, 
+    size_t      _dataSizeInByte, 
+    size_t      _arrayDataToSortInByte,
+    CompareFunc _compareOperation, 
+    SwapFunc    _swapOperation,
+    Sort_Result* _retval
+);
+
 
 Sort_Result BubbleSortOnData(
     void*       _arrayOfDataToSort, 
@@ -14,10 +23,22 @@ Sort_Result BubbleSortOnData(
     size_t i = 0;
     size_t j = 0;
     int isSwapOccur = 0;
+    size_t maxIters = 0;
     uint8_t* arrayRunner = (uint8_t*)_arrayOfDataToSort;
+    Sort_Result retval;
+    int checkerResult = _CheckSortInputParameters(
+        _arrayOfDataToSort, 
+        _dataSizeInByte, 
+        _arrayDataToSortInByte,
+        _compareOperation, 
+        _swapOperation,
+        &retval);
+    
+    if (checkerResult != 0) {
+        return retval;
+    }
 
-    /* TODO: better name */
-    size_t maxIters = _arrayDataToSortInByte - _dataSizeInByte;
+    maxIters = _arrayDataToSortInByte - _dataSizeInByte;
     if (NULL == _compareOperation   ||
         NULL == _swapOperation      ||
         NULL == _arrayOfDataToSort  || 
@@ -26,7 +47,6 @@ Sort_Result BubbleSortOnData(
         _arrayDataToSortInByte < _dataSizeInByte) {
         return SORT_UNINITIALIZED_ERROR;
     }
-
 
     for (i = 0; i < maxIters ; i += _dataSizeInByte) {
         for (j = 0; j < (maxIters - i) ; j += _dataSizeInByte) {
@@ -44,62 +64,51 @@ Sort_Result BubbleSortOnData(
     return SORT_SUCCESS;
 }
 
-struct MergeSort {
-    size_t      mDataSizeInByte;
-    CompareFunc mCompareOperation;
-    SwapFunc    mSwapOperation;
-};
-
-
-/*
-static void _RecutionMerge(
-    void*       _arrayOfDataToSort, 
-    size_t      _arrayDataToSortInByte,
-    struct MergeSort* _sortData) {
-    uint8_t* byteData = (uint8_t*)_arrayOfDataToSort;
-    size_t numOfElemetns = _arrayDataToSortInByte / _sortData->mDataSizeInByte;
-    size_t nextNumOfBytes = (numOfElemetns / 2) * _sortData->mDataSizeInByte;
-    uint8_t* leftBuffer = NULL;
-    uint8_t* rightBuffer = NULL;
-    if (numOfElemetns == 2) {
-        if (_sortData->mCompareOperation(byteData, byteData + _sortData->mDataSizeInByte) == BIGGER) {
-            _sortData->mSwapOperation(byteData, byteData + _sortData->mDataSizeInByte);
-        }
-        return;
-    }
-
-    if (numOfElemetns < 2) {
-        return;
-    }
-    
-    leftBuffer = (uint8_t*)malloc(nextNumOfBytes);
-    rightBuffer = (uint8_t*)malloc(_arrayDataToSortInByte - nextNumOfBytes);
-    memcpy(leftBuffer, byteData, nextNumOfBytes);
-    memcpy(rightBuffer, byteData + nextNumOfBytes, _arrayDataToSortInByte - nextNumOfBytes);
-    _RecutionMerge(leftBuffer, nextNumOfBytes, _sortData);
-    _RecutionMerge(rightBuffer, _arrayDataToSortInByte - nextNumOfBytes, _sortData);
-
-} 
-
-
 Sort_Result MergeSortOnData(
     void*       _arrayOfDataToSort, 
     size_t      _dataSizeInByte, 
     size_t      _arrayDataToSortInByte,
     CompareFunc _compareOperation, 
-    SwapFunc    _swapOperation) {
+    SwapFunc    _swapOperation
+) {
+    Sort_Result retval;
+    int checkerResult = _CheckSortInputParameters(
+        _arrayOfDataToSort, 
+        _dataSizeInByte, 
+        _arrayDataToSortInByte,
+        _compareOperation, 
+        _swapOperation,
+        &retval);
     
-    struct MergeSort sortData = {_dataSizeInByte, _compareOperation, _swapOperation};
-
-    if (NULL == _compareOperation   ||
-        NULL == _swapOperation      ||
-        NULL == _arrayOfDataToSort  || 
-        0 == _dataSizeInByte        ||
-        0 == _arrayDataToSortInByte ||
-        _arrayDataToSortInByte < _dataSizeInByte) {
-        return SORT_UNINITIALIZED_ERROR;
+    if (checkerResult != 0) {
+        return retval;
     }
 
     return SORT_SUCCESS;
 }
-*/
+
+static int _CheckSortInputParameters(
+    void*       _arrayOfDataToSort, 
+    size_t      _dataSizeInByte, 
+    size_t      _arrayDataToSortInByte,
+    CompareFunc _compareOperation, 
+    SwapFunc    _swapOperation,
+    Sort_Result* _retval
+) {
+    if (NULL == _arrayOfDataToSort) {
+        *_retval = SORT_UNINITIALIZED_ARRAY_DATA_ERROR;
+        return -1;
+    }
+
+    if (_dataSizeInByte > _arrayDataToSortInByte) {
+        *_retval = SORT_TOO_SMALL_ARRAY_SIZE_ERROR;
+        return -1;
+    }
+
+    if (_arrayDataToSortInByte % _dataSizeInByte != 0) {
+        *_retval =  SORT_ARRAY_SIZE_UNELINED_ERROR;
+        return -1;
+    }
+
+    return 0;
+}

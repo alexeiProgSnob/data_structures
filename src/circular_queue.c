@@ -18,17 +18,17 @@ struct CQueue {
 CQueue* CQueueCreate(size_t _initSize) {
     CQueue* pQue;
     void** mPQue;
-    if (_initSize == 0) {
+    if (0 == _initSize) {
         return NULL;
     }
 
     pQue = (CQueue*)malloc(sizeof(CQueue));
-    if (pQue == NULL) {
+    if (NULL == pQue) {
         return NULL;
     }
 
     mPQue = (void**)malloc(_initSize * sizeof(void*));
-    if (mPQue == NULL) {
+    if (NULL == mPQue) {
         free(pQue);
         return NULL;
     }
@@ -57,11 +57,11 @@ void CQueueDestroy(CQueue** _queue, void (*_elementDestroy)(void* _item)) {
 }
 
 aps_ds_error CQueueInsert(CQueue* _queue, void* _element) {
-    if (_queue == NULL || _element == NULL) {
+    if (NULL == _queue) {
         return DS_UNINITIALIZED_ERROR;
     }
 
-    if (_element == NULL) {
+    if (NULL == _element) {
         return DS_UNINITIALIZED_ITEM_ERROR;
     }
 
@@ -76,16 +76,16 @@ aps_ds_error CQueueInsert(CQueue* _queue, void* _element) {
 }
 
 aps_ds_error CQueueRemove(CQueue* _queue, void** _returnElement) {
-    if (_queue == NULL) {
+    if (NULL == _queue) {
         return DS_UNINITIALIZED_ERROR;
     }
 
-    if (_queue->m_nItems == 0) {
+    if (0 == _queue->m_nItems) {
         return DS_EMPTY_ERROR;
     }
 
     _queue->m_head = (_queue->m_head + 1) % _queue->m_size;
-    if (_returnElement == NULL) {
+    if (NULL == _returnElement) {
         *_returnElement = *(_queue->m_elements + _queue->m_head);
     }
     --(_queue->m_nItems);
@@ -93,11 +93,11 @@ aps_ds_error CQueueRemove(CQueue* _queue, void** _returnElement) {
 }
 
 int CQueueIsEmpty(const CQueue* _queue) {
-    if (_queue == NULL) {
+    if (NULL == _queue) {
         return 1;
     }
 
-    if (_queue->m_nItems == 0) {
+    if (0 == _queue->m_nItems) {
         return 1;
     }
     return 0;
@@ -106,7 +106,7 @@ int CQueueIsEmpty(const CQueue* _queue) {
 aps_ds_error CQueueForEach(const CQueue* _queue, CQueueElementAction _action,
                            void* _context) {
     size_t i;
-    if (_queue == NULL || _action == NULL) {
+    if (NULL == _queue || NULL == _action) {
         return DS_UNINITIALIZED_ERROR;
     }
 

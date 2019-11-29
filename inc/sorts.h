@@ -17,6 +17,8 @@
 typedef enum Sort_Result {
     SORT_SUCCESS,
     SORT_UNINITIALIZED_ERROR,
+    SORT_TOO_SMALL_ARRAY_SIZE_ERROR,
+    SORT_ARRAY_SIZE_UNELINED_ERROR,
     SORT_UNINITIALIZED_ARRAY_DATA_ERROR
 
 } Sort_Result;
@@ -42,14 +44,14 @@ void SwapToSizeT(void* _generalTypeA, void* _generalTypeB) {
 }
 */
 
-/*
+
 Sort_Result MergeSortOnData(
     void*       _arrayOfDataToSort, 
     size_t      _dataSizeInByte, 
     size_t      _arrayDataToSortInByte,
     CompareFunc _compareOperation, 
     SwapFunc    _swapOperation);
-*/
+
 Sort_Result BubbleSortOnData(
     void*       _arrayOfDataToSort, 
     size_t      _dataSizeInByte, 
