@@ -2,8 +2,8 @@
 #include "list.h"
 #include <stdlib.h> /*< malloc >*/
 
-#define INSERT 666
-#define REMOVE 42
+#define INSERT (666)
+#define REMOVE (42)
 
 struct HashMap {
     List** m_lists;

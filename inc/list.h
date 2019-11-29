@@ -19,8 +19,6 @@
 #include <stddef.h>  /*< size_t >*/
 
 
-
-
 /** 
  * @brief Create a list
  * 
