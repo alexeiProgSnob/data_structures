@@ -337,7 +337,7 @@ END_UNIT
 UNIT(Allocate_BTree)
     BTree* newDataS = BTreeCreate(CompareSizeTPointers);
     ASSERT_THAT(NULL != newDataS);
-    BTreeDestroy(&newDataS, NULL);
+    BTreeDestroy(&newDataS, NULL, NULL);
     ASSERT_THAT(NULL == newDataS); 
 END_UNIT
 
@@ -375,7 +375,7 @@ UNIT(BTree_Valid_Unit_Test)
     BTree* newDataS = BTreeCreate(CompareSizeT);
     ASSERT_THAT(NULL != newDataS);
     for (i = 0 ; i < 4; ++i) {
-        resultChecker = BTreeInsert(newDataS, arr + i);
+        resultChecker = BTreeInsert(newDataS, arr + i,arr + i);
         ASSERT_THAT(resultChecker == DS_SUCCESS);
     }
 
@@ -421,7 +421,7 @@ UNIT(BTree_Valid_Unit_Test)
     ASSERT_THAT_WITH_MESSAGE("BTreeGetItem expected to succeed", resultChecker == DS_ELEMENT_NOT_FOUND_ERROR);
 
     invalidElement = 2;
-    resultChecker = BTreeInsert(newDataS, &invalidElement);
+    resultChecker = BTreeInsert(newDataS, &invalidElement, &invalidElement);
     ASSERT_THAT_WITH_MESSAGE("BTreeInsert expected to fail to insert", resultChecker == DS_KEY_EXISTS_ERROR);
 
     printf("-----------remove-----------\n");
@@ -437,7 +437,7 @@ UNIT(BTree_Valid_Unit_Test)
         printf("\n");
     }
 
-    BTreeDestroy(&newDataS, NULL);
+    BTreeDestroy(&newDataS, NULL, NULL);
     ASSERT_THAT(NULL == newDataS); 
 END_UNIT
 

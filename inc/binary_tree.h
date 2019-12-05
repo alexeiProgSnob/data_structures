@@ -12,17 +12,11 @@
  *  @bug No known bugs.
  */
 
-#include "data_structure_error.h"
+#include "data_structure_defenitions.h"
 #include <unistd.h> /*< ssize_t >*/
 
 typedef struct BTree BTree;
-typedef void (*BTreeElementAction)(void* _item, void* _context);
 
-typedef enum TravelType {
-    IN_ORDER,
-    POST_ORDER,
-    PRE_ORDER
-} TravelType;
 
 /* For example
 Compare_Result Int(const void* _a, const void* _b) {
@@ -53,7 +47,7 @@ BTree* BTreeCreate(CompareFunc _compareFunc);
  * @param[in]       _elementDestroy - Destroy function for for the data if NULL the data will not be freed
  * @return
  */
-void BTreeDestroy(BTree** _pTree, ElementDestroy _elementDestroy);
+void BTreeDestroy(BTree** _pTree, ElementDestroy _elementDestroy, ElementDestroy _keyDestroy);
 
 /** 
  * @brief Insert new data to binary search tree.
@@ -61,7 +55,7 @@ void BTreeDestroy(BTree** _pTree, ElementDestroy _elementDestroy);
  * @param[in] _data - data that will be inserted. The data must contain a key.
  * @return[success] DS_SUCCESS 
  */
-aps_ds_error BTreeInsert(BTree* _tree, void* _data);
+aps_ds_error BTreeInsert(BTree* _tree, const void* _key, void* _data);
 
 /** 
  * @brief Remove data from binary search tree.
@@ -89,7 +83,7 @@ aps_ds_error BTreeGetItem(const BTree* _tree, const void* _keyToFind, void** _pD
  * @param[in] _context  - User provided context, will be sent to _action
  * @returns[success] DS_SUCCESS
  */
-aps_ds_error BTreeForEach(const BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context);
+aps_ds_error BTreeForEach(const BTree* _tree, TravelType _travelType, ElementAction _action, void* _context);
 
 /** 
  * @brief Get The minimal key data.

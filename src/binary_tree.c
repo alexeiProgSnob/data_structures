@@ -1,18 +1,6 @@
 #include "binary_tree.h"
-#include <stdlib.h> /*< malloc >*/
+#include "tree_internal.h"
 #include <stdint.h> /*< int8_t >*/
-typedef struct TreeNode TreeNode;
-
-struct TreeNode {
-    TreeNode* m_leftNode;
-    TreeNode* m_rightNode;
-    void* m_data;
-    size_t m_level;
-};
-
-typedef struct _Sentinel {
-    TreeNode* m_root;
-} Sentinel;
 
 struct BTree {
     Sentinel m_sentinel;
@@ -22,31 +10,13 @@ struct BTree {
     CompareFunc m_compareFunc;
 };
 
-typedef void (*NodeTravelTask)(TreeNode* _node);
-typedef struct _TravelTasks {
-    void* m_context;
-    BTreeElementAction m_taskOnItem;
-    NodeTravelTask m_taskOnNode;
-} TravelTasks;
-
-static TreeNode* _CreateAndInitNewNode(void* _data);
+static TreeNode* _CreateAndInitNewNode(const void* _key, void* _data);
 static aps_ds_error _RecursiveInsert(BTree* _tree, TreeNode* _root, TreeNode* _newNode);
-static void _OperateOnNodeAndData(TreeNode* _node, TravelTasks* _tasks);
 static size_t _TreeHeight(TreeNode* _root);
 static TreeNode* _MaxValueNode(TreeNode* _root);
 static TreeNode* _MinValueNode(TreeNode* _root);
 static TreeNode* _FindNode(TreeNode* _root, const void* _keyToFind, CompareFunc _compare);
 static TreeNode* _RecursiveDeletion(TreeNode* _root, const void* _keyToFind, void** _pData, CompareFunc _compare);
-
-/*< (Left, Root, Right) >*/
-static void _InorderTravel(TreeNode* _root, TravelTasks* _tasks);
-
-/*< (Root, Left, Right)  >*/
-static void _PreorderTravel(TreeNode* _root, TravelTasks* _tasks);
-
-/*< (Left, Right, Root) >*/
-static void _PostorderTravel(TreeNode* _root, TravelTasks* _tasks);
-
 
 BTree* BTreeCreate(CompareFunc _compareFunc) {
     BTree* newTree = NULL;
@@ -66,26 +36,12 @@ BTree* BTreeCreate(CompareFunc _compareFunc) {
     return newTree;
 }
 
-static void _FreeNode(TreeNode* _node) {
-    free(_node);
-}
-
-typedef struct FuncOnItem {
-    ElementDestroy mDeleteFunc;
-} FuncOnItem;
-
-void DeleteDataFromNodes(void* _item, void* _context) {
-    FuncOnItem* deleteFunc = (FuncOnItem*)_context;
-    if (NULL != deleteFunc->mDeleteFunc) {
-        deleteFunc->mDeleteFunc(_item);
-    }
-}
-
-void BTreeDestroy(BTree** _pTree, ElementDestroy _elementDestroy) {
+void BTreeDestroy(BTree** _pTree, ElementDestroy _elementDestroy, ElementDestroy _keyDestroy) {
     TravelTasks tasks;
     FuncOnItem funcOnItem;
     funcOnItem.mDeleteFunc = _elementDestroy;
     tasks.m_taskOnItem = DeleteDataFromNodes;
+    tasks.m_taskOnKey = _keyDestroy;
     tasks.m_taskOnNode = _FreeNode;
     tasks.m_context = (void*)&funcOnItem;
     if (NULL == _pTree || NULL == *_pTree) {
@@ -101,13 +57,14 @@ void BTreeDestroy(BTree** _pTree, ElementDestroy _elementDestroy) {
 }
 
 
-aps_ds_error BTreeInsert(BTree* _tree, void* _data) {
+aps_ds_error BTreeInsert(BTree* _tree, const void* _key, void* _data) {
     TreeNode* newNodeToInsert = NULL;
-    if (NULL == _tree || NULL == _data) {
+    aps_ds_error returnValue = DS_GENERAL_ERROR;
+    if (NULL == _tree || NULL == _data || NULL == _key) {
         return DS_UNINITIALIZED_ERROR;
     }
 
-    newNodeToInsert = _CreateAndInitNewNode(_data);
+    newNodeToInsert = _CreateAndInitNewNode(_key, _data);
     if (NULL == newNodeToInsert) {
         return DS_ALLOCATION_ERROR;
     }
@@ -115,11 +72,16 @@ aps_ds_error BTreeInsert(BTree* _tree, void* _data) {
     if (NULL == _tree->m_sentinel.m_root) {
         _tree->m_sentinel.m_root = newNodeToInsert;
         ++_tree->m_numOfItems;
+        returnValue = DS_SUCCESS;
     } else {
-        return _RecursiveInsert(_tree, _tree->m_sentinel.m_root, newNodeToInsert);
+        returnValue = _RecursiveInsert(_tree, _tree->m_sentinel.m_root, newNodeToInsert);
+        switch (returnValue) {
+            case DS_KEY_EXISTS_ERROR: free(newNodeToInsert); break;
+            default: break;
+        }
     }
 
-    return DS_SUCCESS;
+    return returnValue;
 }
 
 aps_ds_error BTreeRemove(BTree* _tree, const void* _keyToFind, void** _pData) {
@@ -166,7 +128,7 @@ aps_ds_error BTreeGetItem(const BTree* _tree, const void* _keyToFind, void** _pD
     return DS_SUCCESS;
 }
 
-aps_ds_error BTreeForEach(const BTree* _tree, TravelType _travelType, BTreeElementAction _action, void* _context) {
+aps_ds_error BTreeForEach(const BTree* _tree, TravelType _travelType, ElementAction _action, void* _context) {
     TravelTasks tasks;
     if (NULL == _tree || NULL == _action) {
         return DS_UNINITIALIZED_ERROR;
@@ -179,6 +141,7 @@ aps_ds_error BTreeForEach(const BTree* _tree, TravelType _travelType, BTreeEleme
     tasks.m_context = _context;
     tasks.m_taskOnItem = _action;
     tasks.m_taskOnNode = NULL;
+    tasks.m_taskOnKey = NULL;
     switch (_travelType) {
         case IN_ORDER:      _InorderTravel((_tree->m_sentinel).m_root, &tasks); break;
         case POST_ORDER:    _PostorderTravel((_tree->m_sentinel).m_root, &tasks); break;
@@ -237,7 +200,7 @@ void* BTreeGetRoot(const BTree* _tree) {
 }
 
 static aps_ds_error _RecursiveInsert(BTree* _tree, TreeNode* _root, TreeNode* _newNode) {
-    Compare_Result comapreResult = _tree->m_compareFunc(_newNode->m_data, _root->m_data);
+    Compare_Result comapreResult = _tree->m_compareFunc(_newNode->m_key, _root->m_key);
     _newNode->m_level += 1;
     switch (comapreResult) {
         case EQUAL:
@@ -280,32 +243,18 @@ static size_t _TreeHeight(TreeNode* _root) {
     return 1 + MAX(leftHeight, rightHeight);
 }
 
-static TreeNode* _CreateAndInitNewNode(void* _data) {
+static TreeNode* _CreateAndInitNewNode(const void* _key, void* _data) {
     TreeNode* newNode = (TreeNode*)malloc(sizeof(TreeNode));
     if (NULL == newNode) {
         return NULL;
     }
-
+    newNode->m_key = _key;
     newNode->m_data = _data;
     newNode->m_level = 0;
     newNode->m_leftNode = NULL;
     newNode->m_rightNode = NULL;
 
     return newNode;
-}
-
-static void _OperateOnNodeAndData(TreeNode* _node, TravelTasks* _tasks) {
-    if (NULL == _node || NULL == _tasks) {
-        return;
-    }
-
-    if (NULL != _tasks->m_taskOnItem) {
-        _tasks->m_taskOnItem(_node->m_data, _tasks->m_context);
-    }
-
-    if (NULL != _tasks->m_taskOnNode) {
-        _tasks->m_taskOnNode(_node);
-    }
 }
 
 static TreeNode* _MaxValueNode(TreeNode* _root) {
@@ -364,7 +313,7 @@ static TreeNode* _FindNode(TreeNode* _root, const void* _keyToFind, CompareFunc 
         return _root;
     }
 
-    compareResult = _compare(_keyToFind, _root->m_data);
+    compareResult = _compare(_keyToFind, _root->m_key);
     switch (compareResult) {
         case EQUAL:     return _root;
         case BIGGER:    return _FindNode(_root->m_rightNode, _keyToFind, _compare);
@@ -372,56 +321,4 @@ static TreeNode* _FindNode(TreeNode* _root, const void* _keyToFind, CompareFunc 
         default:        break;
     }
     return NULL;
-}
-
-/*< (Left, Root, Right) >*/
-static void _InorderTravel(TreeNode* _root, TravelTasks* _tasks) {
-    if (NULL == _root->m_leftNode && NULL == _root->m_rightNode) {
-        _OperateOnNodeAndData(_root, _tasks);
-        return;
-    }
-
-    if (NULL != _root->m_leftNode) {
-        _InorderTravel(_root->m_leftNode, _tasks);
-    }
-
-    _OperateOnNodeAndData(_root, _tasks);
-
-    if (NULL != _root->m_rightNode) {
-        _InorderTravel(_root->m_rightNode, _tasks);
-    }
-}
-
-/*< (Left, Right, Root) >*/
-static void _PostorderTravel(TreeNode* _root, TravelTasks* _tasks) {
-    if (NULL == _root->m_leftNode && NULL == _root->m_rightNode) {
-        _OperateOnNodeAndData(_root, _tasks);
-        return;
-    }
-
-    if (NULL != _root->m_leftNode) {
-        _PostorderTravel(_root->m_leftNode, _tasks);
-    }
-
-    if (NULL != _root->m_rightNode) {
-        _PostorderTravel(_root->m_rightNode, _tasks);
-    }
-    _OperateOnNodeAndData(_root, _tasks);
-}
-
-
-static void _PreorderTravel(TreeNode* _root, TravelTasks* _tasks) {
-    if (NULL == _root->m_leftNode && NULL == _root->m_rightNode) {
-        _OperateOnNodeAndData(_root, _tasks);
-        return;
-    }
-
-    _OperateOnNodeAndData(_root, _tasks);
-    if (NULL != _root->m_leftNode) {
-        _PreorderTravel(_root->m_leftNode, _tasks);
-    }
-
-    if (NULL != _root->m_rightNode) {
-        _PreorderTravel(_root->m_rightNode, _tasks);
-    }
 }

@@ -1,5 +1,5 @@
-#ifndef __DATA_STRUCTURE_ERROR_H_
-#define __DATA_STRUCTURE_ERROR_H_
+#ifndef __DATA_STRUCTURE_DEFENITIONS_H_
+#define __DATA_STRUCTURE_DEFENITIONS_H_
 
 #define MAX(a,b)  (a < b ? b : a)
 
@@ -26,8 +26,15 @@ typedef enum Compare_Result {
 } Compare_Result;
 
 
+typedef enum TravelType {
+    IN_ORDER,
+    POST_ORDER,
+    PRE_ORDER
+} TravelType;
+
 typedef Compare_Result (*CompareFunc)(const void*, const void*);
 
 typedef void (*ElementDestroy)(void* _item);
+typedef void (*ElementAction)(void* _item, void* _context);
 
-#endif /* __DATA_STRUCTURE_ERROR_H_ */
+#endif /* __DATA_STRUCTURE_DEFENITIONS_H_ */

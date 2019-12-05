@@ -14,7 +14,7 @@
  *  @bug no bugs known.
  */
 
-#include "data_structure_error.h"
+#include "data_structure_defenitions.h"
 #include <stddef.h> /*< size_t >*/
 
 typedef struct CQueue CQueue;
