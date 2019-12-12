@@ -43,8 +43,63 @@ void AVLDestroy(AVL** _pTree, ElementDestroy _elementDestroy) {
     *_pTree = NULL;
 }
 
+static TreeNode* _RightRotate(TreeNode* _node) {
+    TreeNode* leftNode = _node->m_leftNode;
+    TreeNode* t2 = leftNode->m_rightNode;
+    
+    /* preform Rotation */
+    leftNode->m_rightNode = _node;
+    _node->m_leftNode = t2;
+
+    /* TODO: add height calulation */
+    return leftNode;
+}
+
+static TreeNode* _LeftRotate(TreeNode* _node) {
+    TreeNode* rightNode = _node->m_rightNode;
+    TreeNode* t2 = rightNode->m_leftNode;
+    
+    /* preform Rotation */
+    rightNode->m_leftNode = _node;
+    _node->m_rightNode = t2;
+
+    /* TODO: add height calulation */
+    return rightNode;
+}
+
+static aps_ds_error _RecursiveInsert(AVL* _tree, TreeNode* _root, TreeNode* _newNode) {
+    Compare_Result comapreResult = _tree->m_compareFunc(_newNode->m_key, _root->m_key);
+    aps_ds_error recursionRetval = DS_GENERAL_ERROR;
+    _newNode->m_level += 1;
+    switch (comapreResult) {
+        case EQUAL:
+            return DS_KEY_EXISTS_ERROR;
+        case BIGGER:
+            if (NULL == _root->m_rightNode) {
+                _root->m_rightNode = _newNode;
+                ++_tree->m_numOfItems;
+                return DS_SUCCESS;
+            }
+            recursionRetval = _RecursiveInsert(_tree, _root->m_rightNode, _newNode);
+            if (recursionRetval == DS_SUCCESS) {
+
+            }
+            return recursionRetval;
+
+        case SMALLER:
+            if (NULL == _root->m_leftNode) {
+                _root->m_leftNode = _newNode;
+                ++_tree->m_numOfItems;
+                return DS_SUCCESS;
+            }
+            return _RecursiveInsert(_tree, _root->m_leftNode, _newNode);
+    }
+    return DS_GENERAL_ERROR;
+}
+
 aps_ds_error AVLInsert(AVL* _tree, const void* _key, void* _data) {
     TreeNode* newNodeToInsert = NULL;
+    aps_ds_error returnValue = DS_SUCCESS;
     if (NULL == _tree || NULL == _data || NULL == _key) {
         return DS_UNINITIALIZED_ERROR;
     }
@@ -58,10 +113,15 @@ aps_ds_error AVLInsert(AVL* _tree, const void* _key, void* _data) {
         _tree->m_sentinel.m_root = newNodeToInsert;
         ++_tree->m_numOfItems;
     } else {
-        return _RecursiveInsert(_tree, _tree->m_sentinel.m_root, newNodeToInsert);
+        returnValue = _RecursiveInsert(_tree, _tree->m_sentinel.m_root, newNodeToInsert);
+        switch (returnValue) {
+            case DS_KEY_EXISTS_ERROR: free(newNodeToInsert); break;
+            default: break;
+        }
+
     }
 
-    return DS_SUCCESS;
+    return returnValue;
 }
 
 aps_ds_error AVLRemove(AVL* _tree, const void* _key, void** _pData);
