@@ -33,17 +33,17 @@ OBJECTS		+= $(OBJ)sorts.o
 UTEST_NAME := utest
 .PHONY : all
 
-all : $(OBJECTS) $(SLIB)LDS_$(ARCH)bit.a $(DLIB)LDS_$(ARCH)bit.so
+all : $(OBJECTS) $(SLIB)libLDS_$(ARCH)bit.a $(DLIB)libLDS_$(ARCH)bit.so
 
 $(UTEST_NAME): $(OBJECTS) $(OBJ)uni_test.o
 	@echo "__________________ Linking __________________"
 	@echo "__________________ $@ __________________"
 	@echo "$^";$(CC) $(CFLAGS) -o $@ $^
 
-$(SLIB)LDS_$(ARCH)bit.a :$(OBJECTS)
+$(SLIB)libLDS_$(ARCH)bit.a :$(OBJECTS)
 	@echo "Build static lib $@";ar cr $@ $^
 
-$(DLIB)LDS_$(ARCH)bit.so :$(OBJECTS)
+$(DLIB)libLDS_$(ARCH)bit.so :$(OBJECTS)
 	$(CC) $(CFLAGS) -shared $^ -o $@
 
 $(OBJ)%.o : $(SRC)%.c $(INC)%.h
