@@ -1,5 +1,5 @@
 BIT=$(getconf LONG_BIT)
-DIRECTORY=/usr/include/alexei_prog_snob
+DIRECTORY=/usr/include/aps
 make clean
 make
 
@@ -8,7 +8,7 @@ if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
 fi
 
-cp ./inc/* /usr/include/alexei_prog_snob/
+cp ./inc/* $DIRECTORY/
 cp ./dynamic_lib/"$BIT"bit/libLDS_"$BIT"bit.so /usr/lib/libLDS.so
 
 cd ./test/

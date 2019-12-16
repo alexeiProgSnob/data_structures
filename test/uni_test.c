@@ -1,13 +1,13 @@
 #include "uni_test.h"
-#include "alexei_prog_snob/sorts.h"
-#include "alexei_prog_snob/vector.h"
-#include "alexei_prog_snob/heap.h"
-#include "alexei_prog_snob/hash.h"
-#include "alexei_prog_snob/list.h"
-#include "alexei_prog_snob/circular_queue.h"
-#include "alexei_prog_snob/circular_safe_queue.h"
-#include "alexei_prog_snob/stack.h"
-#include "alexei_prog_snob/binary_tree.h"
+#include "aps/sorts.h"
+#include "aps/vector.h"
+#include "aps/heap.h"
+#include "aps/hash.h"
+#include "aps/list.h"
+#include "aps/circular_queue.h"
+#include "aps/circular_safe_queue.h"
+#include "aps/stack.h"
+#include "aps/binary_tree.h"
 #include <stdio.h>
 
 Compare_Result CompareSizeTPointers(const void* _generalTypeA, const void* _generalTypeB) {
