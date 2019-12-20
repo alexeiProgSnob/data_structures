@@ -2,14 +2,14 @@
 #include "list.h"
 #include "listInternal.h"
 
-static void BubbleUp(ListItr _itrNext, ListItr _itrEnd, LessFunction _less);
-static void swap(ListItr _itrNext, void* _elementBig, void* _elementSmall);
+static void _BubbleUp(ListItr _itrNext, ListItr _itrEnd, LessFunction _less);
+static void _Swap(ListItr _itrNext, void* _elementBig, void* _elementSmall);
 
 ListItr ListItr_FindFirst(ListItr _begin, ListItr _end,
                           PredicateFunction _predicate, void* _context) {
     ListItr itr = _begin;
 
-    if (_predicate == NULL || _begin == NULL || _end == NULL) {
+    if (NULL == _predicate || NULL == _begin || NULL == _end) {
         return NULL;
     }
 
@@ -25,7 +25,7 @@ size_t ListItr_CountIf(ListItr _begin, ListItr _end,
     ListItr itr = _begin;
     void* elemnt;
     size_t count = 0;
-    if (_predicate == NULL || _begin == NULL || _end == NULL) {
+    if (NULL == _predicate || NULL == _begin || NULL == _end) {
         return 0;
     }
 
@@ -43,7 +43,7 @@ ListItr ListItr_ForEach(ListItr _begin, ListItr _end,
                         ListActionFunction _action, void* _context) {
     ListItr itr = _begin;
     void* element;
-    if (_action == NULL || _begin == NULL || _end == NULL) {
+    if (NULL == _action || NULL == _begin || NULL == _end) {
         return NULL;
     }
 
@@ -60,17 +60,17 @@ ListItr ListItr_ForEach(ListItr _begin, ListItr _end,
 void ListItr_Sort(ListItr _begin, ListItr _end, LessFunction _less) {
     ListItr itrNext = _begin;
     ListItr itrEnd = ListItr_Prev(_end);
-    if (_begin == NULL || _end == NULL || _less == NULL) {
+    if (NULL == _begin || NULL == _end || NULL == _less) {
         return;
     }
     while (ListItr_Equals(_begin, itrEnd) == 0) {
         itrNext = _begin;
-        BubbleUp(itrNext, itrEnd, _less);
+        _BubbleUp(itrNext, itrEnd, _less);
         itrEnd = ListItr_Prev(itrEnd);
     }
 }
 
-static void BubbleUp(ListItr _itrNext, ListItr _itrEnd, LessFunction _less) {
+static void _BubbleUp(ListItr _itrNext, ListItr _itrEnd, LessFunction _less) {
     void* elemntSmall;
     void* elemntBig;
     while (ListItr_Equals(_itrEnd, _itrNext) == 0) {
@@ -78,12 +78,12 @@ static void BubbleUp(ListItr _itrNext, ListItr _itrEnd, LessFunction _less) {
         _itrNext = ListItr_Next(_itrNext);
         elemntBig = ListItr_Get(_itrNext);
         if (_less(elemntBig, elemntSmall)) {
-            swap(_itrNext, elemntBig, elemntSmall);
+            _Swap(_itrNext, elemntBig, elemntSmall);
         }
     }
 }
 
-static void swap(ListItr _itrNext, void* _elementBig, void* _elementSmall) {
+static void _Swap(ListItr _itrNext, void* _elementBig, void* _elementSmall) {
     ListItr_Set(_itrNext, _elementSmall);
     ListItr_Set(ListItr_Prev(_itrNext), _elementBig);
 }
@@ -105,8 +105,13 @@ ListItr ListItr_Merge(ListItr _destBegin, ListItr _firstBegin,
                       ListItr _secondEnd, LessFunction _less) {
     ListItr sortBegin;
     ListItr next;
-    if (_destBegin == NULL || _firstBegin == NULL || _firstEnd == NULL ||
-        _secondBegin == NULL || _secondEnd == NULL) {
+    if (
+        NULL == _destBegin      || 
+        NULL == _firstBegin     || 
+        NULL == _firstEnd       ||
+        NULL == _secondBegin    || 
+        NULL == _secondEnd
+        ) {
         return NULL;
     }
 
@@ -122,12 +127,12 @@ ListItr ListItr_Merge(ListItr _destBegin, ListItr _firstBegin,
 List* ListItr_Cut(ListItr _begin, ListItr _end) {
     List* desList;
     ListItr desBegin;
-    if (_begin == NULL && _end == NULL) {
+    if (NULL == _begin && NULL == _end) {
         return NULL;
     }
 
     desList = ListCreate();
-    if (desList == NULL) {
+    if (NULL == desList) {
         return NULL;
     }
 
@@ -144,12 +149,12 @@ List* ListItr_Unique(ListItr _begin, ListItr _end, EqualsFunction _equals) {
     List* desList;
     ListItr desBegin;
 
-    if (_begin == NULL || _end == NULL || _equals == NULL) {
+    if (NULL == _begin || NULL == _end || NULL == _equals) {
         return NULL;
     }
 
     desList = ListCreate();
-    if (desList == NULL) {
+    if (NULL == desList) {
         return NULL;
     }
 

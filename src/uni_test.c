@@ -352,7 +352,7 @@ typedef struct ArrIndexSize {
 
 void PrintSizeTAndAddToArrayForValidate(void* _item, void* _context) {
     ArrIndexSize* dataToFill = (ArrIndexSize*)_context;
-    printf("%lu ", *((size_t*)(_item)));
+    printf("%u ", *((size_t*)(_item)));
     if (dataToFill->m_indx < dataToFill->m_size) {
         (dataToFill->m_arr)[dataToFill->m_indx] = *((size_t*)(_item));
         ++dataToFill->m_indx;

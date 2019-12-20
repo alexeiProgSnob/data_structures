@@ -3,11 +3,11 @@
 #include <stdlib.h> /*< free >*/
 
 ListItr ListItr_Begin(const List* _list) {
-    return (_list == NULL) ? NULL : (_list->m_head).m_next;
+    return (NULL == _list) ? NULL : (_list->m_head).m_next;
 }
 
 ListItr ListItr_End(const List* _list) {
-    return (_list == NULL) ? NULL : (_list->m_tail).m_next;
+    return (NULL == _list) ? NULL : (_list->m_tail).m_next;
 }
 
 int ListItr_Equals(const ListItr _a, const ListItr _b) { return (_a == _b); }
@@ -15,7 +15,7 @@ int ListItr_Equals(const ListItr _a, const ListItr _b) { return (_a == _b); }
 ListItr ListItr_Next(ListItr _itr) {
     Node* node = _itr;
     Node* nexNode;
-    if (_itr == NULL) {
+    if (NULL == _itr) {
         return NULL;
     }
     nexNode = node->m_next;
@@ -26,7 +26,7 @@ ListItr ListItr_Prev(ListItr _itr) {
     Node* node = _itr;
     Node* prevNode;
 
-    if (_itr == NULL) {
+    if (NULL == _itr) {
         return NULL;
     }
 
@@ -39,13 +39,13 @@ ListItr ListItr_Prev(ListItr _itr) {
 
 void* ListItr_Get(ListItr _itr) {
     Node* node = _itr;
-    return (_itr == NULL) ? NULL : node->m_item;
+    return (NULL == _itr) ? NULL : node->m_item;
 }
 
 void* ListItr_Set(ListItr _itr, void* _element) {
     Node* node = _itr;
     void* item;
-    if (_itr == NULL || _element == NULL) {
+    if (NULL == _itr || NULL == _element) {
         return NULL;
     }
     item = node->m_item;
@@ -56,7 +56,7 @@ void* ListItr_Set(ListItr _itr, void* _element) {
 ListItr ListItr_InsertBefore(ListItr _itr, void* _element) {
     Node* node = _itr;
     Node* newNode;
-    if (_itr == NULL || _element == NULL) {
+    if (NULL == _itr || NULL == _element) {
         return NULL;
     }
 
@@ -72,7 +72,7 @@ ListItr ListItr_InsertBefore(ListItr _itr, void* _element) {
 void* ListItr_Remove(ListItr _itr) {
     Node* node = _itr;
     void* item;
-    if (_itr == NULL) {
+    if (NULL == _itr) {
         return NULL;
     }
 

@@ -1,6 +1,6 @@
 #include "list.h"
 #include "listInternal.h"
-#include <stdlib.h>/* for malloc */
+#include <stdlib.h>/*< malloc >*/
 
 /**
  *  @file DoubleLindedList.c
@@ -13,21 +13,21 @@
  *  @bug No known bugs.
  */
 
-static aps_ds_error PushToList(List *_list, void *_item, Node *_leftNode);
-static List *InisalizeData(List *_list);
+static aps_ds_error _PushToList(List* _list, void* _item, Node* _leftNode);
+static List* _InisalizeData(List* _list);
 
-List *ListCreate() {
-    List *lPtr;
+List* ListCreate() {
+    List* lPtr;
 
-    lPtr = (List *)malloc(sizeof(List));
-    if (lPtr == NULL) {
+    lPtr = (List* )malloc(sizeof(List));
+    if (NULL == lPtr) {
         return NULL;
     }
 
-    return InisalizeData(lPtr);
+    return _InisalizeData(lPtr);
 }
 
-static List *InisalizeData(List *_list) {
+static List* _InisalizeData(List* _list) {
     _list->m_tail.m_prev = &_list->m_head;
     _list->m_tail.m_next = &_list->m_tail;
     _list->m_head.m_next = &_list->m_tail;
@@ -35,9 +35,9 @@ static List *InisalizeData(List *_list) {
     return _list;
 }
 
-void ListDestroy(List **_plist, void (*_elementDestroy)(void *_item)) {
-    void *item;
-    if (_plist == NULL || *_plist == NULL) {
+void ListDestroy(List** _plist, void (*_elementDestroy)(void* _item)) {
+    void* item;
+    if (NULL == _plist || NULL == *_plist) {
         return;
     }
 
@@ -51,13 +51,13 @@ void ListDestroy(List **_plist, void (*_elementDestroy)(void *_item)) {
     *_plist = NULL;
 }
 
-aps_ds_error ListPushHead(List *_list, void *_item) {
-    return PushToList(_list, _item, &_list->m_head);
+aps_ds_error ListPushHead(List* _list, void* _item) {
+    return _PushToList(_list, _item, &_list->m_head);
 }
 
-aps_ds_error ListPopHead(List *_list, void **_pItem) {
+aps_ds_error ListPopHead(List* _list, void* *_pItem) {
     Node *tempRemove;
-    if (_list == NULL || _pItem == NULL) {
+    if (NULL == _list || NULL == _pItem) {
         return DS_UNINITIALIZED_ERROR;
     }
 
@@ -74,13 +74,13 @@ aps_ds_error ListPopHead(List *_list, void **_pItem) {
     return DS_SUCCESS;
 }
 
-aps_ds_error ListPushTail(List *_list, void *_item) {
-    return PushToList(_list, _item, _list->m_tail.m_prev);
+aps_ds_error ListPushTail(List* _list, void* _item) {
+    return _PushToList(_list, _item, _list->m_tail.m_prev);
 }
 
-aps_ds_error ListPopTail(List *_list, void **_pItem) {
+aps_ds_error ListPopTail(List* _list, void** _pItem) {
     Node *tempRemove;
-    if (_list == NULL || _pItem == NULL) {
+    if (NULL == _list || NULL == _pItem) {
         return DS_UNINITIALIZED_ERROR;
     }
 
@@ -97,12 +97,13 @@ aps_ds_error ListPopTail(List *_list, void **_pItem) {
     return DS_SUCCESS;
 }
 
-size_t ListSize(const List *_list) {
+size_t ListSize(const List* _list) {
     Node *runOnList = (_list->m_head).m_next;
     size_t count = 0;
-    if (_list == NULL) {
+    if (NULL == _list) {
         return 0;
     }
+
     while (runOnList != &_list->m_tail) {
         ++count;
         runOnList = runOnList->m_next;
@@ -110,19 +111,19 @@ size_t ListSize(const List *_list) {
     return count;
 }
 
-static aps_ds_error PushToList(List *_list, void *_item, Node *_leftNode) {
+static aps_ds_error _PushToList(List* _list, void* _item, Node *_leftNode) {
     Node *newNode;
 
-    if (_list == NULL) {
+    if (NULL == _list) {
         return DS_UNINITIALIZED_ERROR;
     }
 
-    if (_item == NULL) {
+    if (NULL == _item) {
         return DS_UNINITIALIZED_ITEM_ERROR;
     }
 
     newNode = NodeCreate(_item);
-    if (newNode == NULL) {
+    if (NULL == newNode) {
         return DS_ALLOCATION_ERROR;
     }
 
@@ -132,10 +133,10 @@ static aps_ds_error PushToList(List *_list, void *_item, Node *_leftNode) {
     return DS_SUCCESS;
 }
 
-Node *NodeCreate(void *_item) {
+Node *NodeCreate(void* _item) {
     Node *newNode;
-    newNode = (Node *)malloc(sizeof(Node));
-    if (newNode == NULL) {
+    newNode = (Node*)malloc(sizeof(Node));
+    if (NULL == newNode) {
         return NULL;
     }
     newNode->m_item = _item;

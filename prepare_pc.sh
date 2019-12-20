@@ -1,7 +1,5 @@
 BIT=$(getconf LONG_BIT)
 DIRECTORY=/usr/include/aps
-make clean
-make
 
 
 if [ ! -d "$DIRECTORY" ]; then
