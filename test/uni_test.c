@@ -1,13 +1,13 @@
 #include "uni_test.h"
-#include "aps/sorts.h"
-#include "aps/vector.h"
-#include "aps/heap.h"
-#include "aps/hash.h"
-#include "aps/list.h"
-#include "aps/circular_queue.h"
-#include "aps/circular_safe_queue.h"
-#include "aps/stack.h"
-#include "aps/binary_tree.h"
+#include "aps/ds/sorts.h"
+#include "aps/ds/vector.h"
+#include "aps/ds/heap.h"
+#include "aps/ds/hash.h"
+#include "aps/ds/list.h"
+#include "aps/ds/circular_queue.h"
+#include "aps/ds/circular_safe_queue.h"
+#include "aps/ds/stack.h"
+#include "aps/ds/binary_tree.h"
 #include <stdio.h>
 
 Compare_Result CompareSizeTPointers(const void* _generalTypeA, const void* _generalTypeB) {
