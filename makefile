@@ -1,55 +1,38 @@
-ARCH := ${ARGS}
-# clang-format -style="{BasedOnStyle: llvm, IndentWidth: 4, AlignTrailingComments: true, PointerAlignment: Left}"
-ifeq ($(ARCH), )
-ARCH := $(shell getconf LONG_BIT)
+include compiler.mk
+include sources.mk
+include includes.mk
+include prepare_libs.mk
+
+
+UNI_TEST 	:= ./uni_test/
+OBJECTS 	:= $(SRCS:%.c=$(OBJ)/%.o)
+UTEST_NAME 	:= utest
+CFLAGS 		:= $(CXXFLAGS) $(addprefix -I,$(INC_DIRS))
+
+ifneq ($(LIB_NAME),)
+CFLAGS 		:= -fPIC $(CFLAGS)
 endif
 
-C_FLAGS_32 := -m32
-C_FLAGS_64 := -m64
-
-CC 			:= gcc
-INC 		:= ./inc/
-SRC 		:= ./src/
-OBJ 		:= ./obj/$(ARCH)bit/
-SLIB 		:= ./static_lib/$(ARCH)bit/
-DLIB 		:= ./dynamic_lib/$(ARCH)bit/
-UNI_TEST	:= ./uni_test/
-INCLUDES 	:= -I$(INC)
-CFLAGS 		:= $(C_FLAGS_$(ARCH)) -fPIC -pedantic -ansi -Werror -Wall $(INCLUDES) -pthread
-
-OBJECTS 	:= $(OBJ)log4c.o 
-OBJECTS 	+= $(OBJ)hash.o 
-OBJECTS		+= $(OBJ)circular_queue.o
-OBJECTS		+= $(OBJ)circular_safe_queue.o
-OBJECTS		+= $(OBJ)heap.o
-OBJECTS		+= $(OBJ)stack.o
-OBJECTS		+= $(OBJ)vector.o
-OBJECTS		+= $(OBJ)list.o
-OBJECTS 	+= $(OBJ)list_itr.o
-OBJECTS		+= $(OBJ)list_operations.o
-OBJECTS		+= $(OBJ)binary_tree.o
-OBJECTS		+= $(OBJ)sorts.o
-
-UTEST_NAME := utest
 .PHONY : all
+.PHONY : clean
 
-all : $(OBJECTS) $(SLIB)libLDS_$(ARCH)bit.a $(DLIB)libLDS_$(ARCH)bit.so
+all : $(OBJECTS) $(PREPARE_LIBS)
 
-$(UTEST_NAME): $(OBJECTS) $(OBJ)uni_test.o
+$(UTEST_NAME): $(OBJECTS)
 	@echo "__________________ Linking __________________"
 	@echo "__________________ $@ __________________"
 	@echo "$^";$(CC) $(CFLAGS) -o $@ $^
 
-$(SLIB)libLDS_$(ARCH)bit.a :$(OBJECTS)
+$(SLIB)/lib$(LIB_NAME).a :$(OBJECTS)
 	@echo "Build static lib $@";ar cr $@ $^
 
-$(DLIB)libLDS_$(ARCH)bit.so :$(OBJECTS)
-	$(CC) $(CFLAGS) -shared $^ -o $@
+$(DLIB)/lib$(LIB_NAME).so :$(OBJECTS)
+	@echo "Build dynamic lib $@";$(CC) $(CFLAGS) -shared $^ -o $@
 
-$(OBJ)%.o : $(SRC)%.c $(INC)%.h
+$(OBJ)/%.o : $(SRC)/%.$(SUFFIX) $(INC)/%.h
 	@echo "Compile $@";$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ)%.o : $(SRC)%.c
+$(OBJ)/%.o : $(SRC)/%.$(SUFFIX)
 	@echo "Compile $@";$(CC) $(CFLAGS) -c $< -o $@
 
 run_uni_test: $(UTEST_NAME)
@@ -59,7 +42,7 @@ valgrind: $(UTEST_NAME)
 	$@ --leak-check=full --show-leak-kinds=all -v ./$<
 
 clean:
-	rm -rf $(OBJ)*.o
-	rm -rf $(SLIB)*.a
-	rm -rf $(DLIB)*.so
+	rm -rf $(OBJ)/*.o
+	rm -rf $(SLIB)/*.a
+	rm -rf $(DLIB)/*.so
 
